@@ -74,9 +74,9 @@ extract-kit/
 ## Development Notes
 
 ### Environment Setup
-1. **Required**: Set `AI_API_KEY` in `.env` for Scaleway API access
-2. **Optional**: Configure `AI_BASE_URL` for different AI providers
-3. **Performance**: Adjust worker counts via `PDF_WORKERS` and `VISION_WORKERS`
+1. **Required**: Set `EK_AI_API_KEY` in `.env` for Scaleway API access
+2. **Optional**: Configure `EK_AI_BASE_URL` for different AI providers
+3. **Performance**: Adjust worker counts via `EK_PDF_WORKERS` and `EK_VISION_WORKERS`
 
 ### Key Technologies
 - **Runtime**: Bun (fast JavaScript/TypeScript runtime)

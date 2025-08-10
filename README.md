@@ -291,19 +291,19 @@ import type {
 
 ```env
 # AI Provider Configuration
-AI_API_KEY=your-scaleway-api-key
-AI_BASE_URL=https://api.scaleway.ai/v1
+EK_AI_API_KEY=your-scaleway-api-key
+EK_AI_BASE_URL=https://api.scaleway.ai/v1
 
 # Server Configuration
 PORT=3000
-NODE_ENV=development
-LOG_LEVEL=info
+EK_NODE_ENV=development
+EK_LOG_LEVEL=info
 
 # Performance Tuning
-ENABLE_WORKERS=true
-PDF_WORKERS=2
-VISION_WORKERS=3
-CPU_USED=2
+EK_ENABLE_WORKERS=true
+EK_PDF_WORKERS=2
+EK_VISION_WORKERS=3
+EK_TMPDIR=/tmp
 ```
 
 ### Supported AI Providers
@@ -395,7 +395,7 @@ For detailed documentation, check out:
 
 | Issue | Solution |
 |-------|----------|
-| `AI_API_KEY not found` | Set your API key in the `.env` file |
+| `EK_AI_API_KEY not found` | Set your API key in the `.env` file |
 | `Port already in use` | Change the port in `.env` or stop the conflicting service |
 | `Worker timeout` | Increase worker timeout in environment variables |
 | `PDF processing failed` | Ensure the PDF is valid and not password-protected |
