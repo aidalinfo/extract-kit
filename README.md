@@ -116,6 +116,8 @@ curl -X POST http://localhost:3000/api/v1/vision/extract \
 
 ## 📦 Using as a Library
 
+📦 **NPM Package**: [@aidalinfo/pdf-processor](https://www.npmjs.com/package/@aidalinfo/pdf-processor)
+
 ### Installation
 
 ```bash
@@ -231,7 +233,7 @@ console.log('Model used:', result.metadata.model);
 const advancedConfig: PdfProcessorConfig = {
   providers: {
     scaleway: {
-      model: "llama-3.2-11b-vision-instruct", // Different model
+      model: "mistral-small-3.1-24b-instruct-2503", // Different model
       apiKey: "your-api-key",
       baseURL: "https://custom-endpoint.ai/v1"
     }
@@ -307,7 +309,7 @@ CPU_USED=2
 ### Supported AI Providers
 
 #### Scaleway AI (Cloud)
-- **Models**: `pixtral-12b-2409`, `llama-3.2-11b-vision-instruct`
+- **Models**: `pixtral-12b-2409`, `mistral-small-3.1-24b-instruct-2503`
 - **Best for**: Production deployments, high accuracy
 
 #### Ollama (Local)
@@ -354,23 +356,6 @@ bun run dev  # Hot reload enabled
 ### Building for Production
 ```bash
 bun run build
-```
-
-## 🐳 Docker Deployment
-
-The project includes a production-ready Docker setup:
-
-```yaml
-services:
-  pdf-processor:
-    image: oven/bun
-    environment:
-      - AI_API_KEY=${AI_API_KEY}
-      - AI_BASE_URL=${AI_BASE_URL}
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./packages/pdf-processor:/app
 ```
 
 ## 📈 Performance

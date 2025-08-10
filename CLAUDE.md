@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-Extract Kit is a production-ready PDF data extraction service powered by AI vision models. It converts PDFs into structured, validated data using TypeScript/Bun runtime with AI providers like Scaleway Pixtral and Ollama LLaVA.
+Extract Kit is a production-ready PDF data extraction service powered by AI vision models. It converts PDFs into structured, validated data using TypeScript/Bun runtime with AI providers like Scaleway (Pixtral, Mistral) and Ollama LLaVA.
 
 **Main Purpose**: Transform PDF documents (invoices, receipts, tables) into structured JSON data through AI-powered vision processing.
 
@@ -156,12 +156,28 @@ LOG_LEVEL=debug bun run dev
 
 When using as a package:
 ```typescript
-import { extractInvoicePdf, extractTablesPdf } from 'extract-kit';
+import { extractInvoicePdf, extractTablesPdf, type PdfProcessorConfig } from '@aidalinfo/pdf-processor';
 
-// Extract with specific provider
+// Method 1: Using environment variables
 const result = await extractInvoicePdf('path/to/file.pdf', {
   provider: 'scaleway',
   enhanceContrast: true
+});
+
+// Method 2: Using configuration object (recommended)
+const pdfProcessor: PdfProcessorConfig = {
+  providers: {
+    scaleway: {
+      model: "mistral-small-3.1-24b-instruct-2503",
+      apiKey: "your-scaleway-api-key",
+      baseURL: "https://api.scaleway.ai/v1"
+    }
+  }
+};
+
+const result2 = await extractInvoicePdf('path/to/file.pdf', {
+  provider: 'scaleway',
+  pdfProcessor
 });
 ```
 
