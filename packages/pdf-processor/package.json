@@ -1,0 +1,95 @@
+{
+  "name": "@aidalinfo/pdf-processor",
+  "version": "1.0.1",
+  "description": "Powerful PDF data extraction library powered by AI vision models. Transform PDFs into structured, validated data using TypeScript, Zod, and AI providers like Scaleway and Ollama.",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "private": false,
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "scripts": {
+    "dev": "bun run --watch src/server.ts",
+    "start": "bun run src/server.ts",
+    "server": "bun run src/server.ts",
+    "build": "bun run clean && bun run build:esm && bun run build:types",
+    "build:esm": "bun build src/index.ts --outdir dist --format esm --target node --external sharp --external ghostscript-node --external @ai-sdk/openai --external ai --external ollama-ai-provider --external pino --external zod",
+    "build:types": "tsc --project tsconfig.build.json",
+    "test": "bun test",
+    "prepublishOnly": "bun run build",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "pdf",
+    "pdf-extraction",
+    "vision-llm",
+    "ai-sdk",
+    "document-processing",
+    "invoice-extraction",
+    "data-extraction",
+    "ocr-alternative",
+    "zod",
+    "sharp",
+    "scaleway",
+    "ollama",
+    "structured-extraction",
+    "typescript",
+    "bun"
+  ],
+  "author": {
+    "name": "aidalinfo",
+    "email": "contact@aidalinfo.com"
+  },
+  "license": "ISC",
+  "homepage": "https://github.com/Killian-Aidalinfo/extract-kit#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Killian-Aidalinfo/extract-kit.git",
+    "directory": "packages/pdf-processor"
+  },
+  "bugs": {
+    "url": "https://github.com/Killian-Aidalinfo/extract-kit/issues"
+  },
+  "files": [
+    "dist/",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "engines": {
+    "node": ">=20.0.0",
+    "bun": ">=1.2.0"
+  },
+  "dependencies": {
+    "@ai-sdk/openai": "^1.0.0",
+    "ai": "^4.1.0",
+    "ghostscript-node": "^1.5.0",
+    "ollama-ai-provider": "^1.2.0",
+    "pino": "^9.8.0",
+    "sharp": "^0.34.1",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.2.19",
+    "@types/node": "^20.11.28",
+    "bun": "^1.2.19",
+    "bun-types": "latest",
+    "pino-pretty": "^13.0.0",
+    "typescript": "^5.4.2"
+  },
+  "peerDependencies": {
+    "typescript": ">=4.5.0"
+  },
+  "pnpm": {
+    "supportedArchitectures": {
+      "os": [
+        "linux"
+      ],
+      "cpu": [
+        "x64"
+      ]
+    }
+  }
+}

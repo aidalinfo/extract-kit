@@ -1,0 +1,7 @@
+data
+node_modules
+.mastra
+pgdata
+pgadmin
+dist/
+.env

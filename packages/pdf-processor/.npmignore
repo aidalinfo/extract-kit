@@ -1,0 +1,62 @@
+# Source files
+src/
+tests/
+*.test.ts
+*.spec.ts
+
+# Server executable (not needed in NPM package)
+dist/server.d.ts
+dist/server.js
+
+# Development files
+.env
+.env.*
+!.env.example
+tsconfig.json
+bun.lockb
+pnpm-lock.yaml
+yarn.lock
+
+# Build artifacts
+node_modules/
+.bun/
+.turbo/
+
+# Development tools
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Docker
+Dockerfile
+docker-compose*.yml
+.dockerignore
+
+# Documentation (except README)
+docs/
+VISION_README.md
+
+# Data files
+data/
+*.pdf
+*.png
+*.jpg
+*.jpeg
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+tmp/
+temp/
+.tmp/
