@@ -430,7 +430,7 @@ This project is licensed under the ISC License - see the LICENSE file for detail
 
 Need help? 
 - Check the [documentation](./packages/pdf-processor/README.md)
-- Open an [issue](https://github.com/your-repo/issues)
+- Open an [issue](https://github.com/aidalinfo/extract-kit/issues)
 - Contact the maintainers
 
 ---

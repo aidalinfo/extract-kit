@@ -44,14 +44,14 @@
     "email": "contact@aidalinfo.com"
   },
   "license": "ISC",
-  "homepage": "https://github.com/Killian-Aidalinfo/extract-kit#readme",
+  "homepage": "https://github.com/aidalinfo/extract-kit#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Killian-Aidalinfo/extract-kit.git",
+    "url": "https://github.com/aidalinfo/extract-kit.git",
     "directory": "packages/pdf-processor"
   },
   "bugs": {
-    "url": "https://github.com/Killian-Aidalinfo/extract-kit/issues"
+    "url": "https://github.com/aidalinfo/extract-kit/issues"
   },
   "files": [
     "dist/",
