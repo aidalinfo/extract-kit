@@ -6,6 +6,8 @@
 
 A modern TypeScript library for converting Office documents (DOCX) to Markdown format, optimized for the Bun ecosystem with advanced support for mathematical equations and tables.
 
+> **🔬 Created through reverse engineering of Microsoft's [MarkItDown](https://github.com/microsoft/markitdown)** - A TypeScript reimplementation that brings Python's document conversion capabilities to the JavaScript/Bun ecosystem with enhanced performance and type safety.
+
 ## 🚀 Features
 
 - ✅ **DOCX to Markdown conversion** with structure preservation
@@ -317,7 +319,7 @@ Contributions are welcome! Please see our [contribution guide](https://github.co
 
 ## 📄 License
 
-This project is licensed under **ISC** - see the [LICENSE](LICENSE) file for details.
+This project is licensed under **MIT** - see the [LICENSE](LICENSE) file for details.
 
 ## 🙏 Acknowledgments
 

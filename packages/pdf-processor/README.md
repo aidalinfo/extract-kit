@@ -1,12 +1,14 @@
-# Extract Kit 🚀
+# PDF Processor
 
-Welcome to **Extract Kit** - a powerful, modern PDF data extraction solution powered by AI vision models! Transform your PDFs into structured, validated data with ease.
+> This library is part of the [Extract Kit](https://github.com/aidalinfo/extract-kit) monorepo.
+
+Welcome to **PDF Processor** - a powerful, modern PDF data extraction solution powered by AI vision models! Transform your PDFs into structured, validated data with ease.
 
 > 🌟 **Inspired by [Sparrow](https://github.com/katanaml/sparrow)** - This project builds upon the innovative concepts from Katana ML's Sparrow framework, reimagined with modern TypeScript, Bun runtime, and enhanced AI vision capabilities. 
 
-## 🎯 What is Extract Kit?
+## 🎯 What is PDF Processor?
 
-Extract Kit is a production-ready TypeScript/Bun-based service that leverages cutting-edge AI vision models to intelligently extract structured data from PDF documents. Whether you're processing invoices, receipts, tables, or custom documents, Extract Kit makes it simple and reliable.
+PDF Processor is a production-ready TypeScript/Bun-based service that leverages cutting-edge AI vision models to intelligently extract structured data from PDF documents. Whether you're processing invoices, receipts, tables, or custom documents, this library makes it simple and reliable.
 
 ## ✨ Key Features
 
@@ -21,12 +23,12 @@ Extract Kit is a production-ready TypeScript/Bun-based service that leverages cu
 
 ## 🏗️ Architecture
 
-Extract Kit follows a modular, scalable architecture:
+This package is part of the `extract-kit` monorepo:
 
 ```
 extract-kit/
 ├── packages/
-│   └── pdf-processor/          # Core extraction service
+│   └── pdf-processor/
 │       ├── src/
 │       │   ├── api/           # REST API endpoints
 │       │   ├── core/          # Business logic & AI integration
@@ -407,7 +409,6 @@ We welcome contributions! Here's how you can help:
 
 For detailed documentation, check out:
 - [API Documentation](./packages/pdf-processor/README.md)
-- [Vision Processing Guide](./packages/pdf-processor/VISION_README.md)
 - [Development Plan](./sparrow-doc/plan_detailled.md)
 
 ## 🐛 Troubleshooting
@@ -423,7 +424,7 @@ For detailed documentation, check out:
 
 ## 📄 License
 
-This project is licensed under the ISC License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## 🙏 Acknowledgments
 
@@ -435,10 +436,10 @@ This project is licensed under the ISC License - see the LICENSE file for detail
 ## 💬 Support
 
 Need help? 
-- Check the [documentation](./packages/pdf-processor/README.md)
+- Check the [documentation](https://github.com/aidalinfo/extract-kit/blob/main/packages/pdf-processor/README.md)
 - Open an [issue](https://github.com/aidalinfo/extract-kit/issues)
 - Contact the maintainers
 
 ---
 
-**Happy Extracting!** 🎉 Transform your PDFs into actionable data with Extract Kit!
+**Happy Extracting!** 🎉 Transform your PDFs into actionable data with PDF Processor!

@@ -1,6 +1,6 @@
 {
   "name": "@aidalinfo/office-to-markdown",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Modern TypeScript library for converting Office documents (DOCX) to Markdown format, optimized for Bun runtime with enhanced table support and math equation conversion.",
   "main": "dist/index.js",
   "module": "dist/index.js",
@@ -42,7 +42,7 @@
     "name": "aidalinfo",
     "email": "contact@aidalinfo.com"
   },
-  "license": "ISC",
+  "license": "MIT",
   "homepage": "https://github.com/aidalinfo/extract-kit#readme",
   "repository": {
     "type": "git",
@@ -53,9 +53,7 @@
     "url": "https://github.com/aidalinfo/extract-kit/issues"
   },
   "files": [
-    "dist/",
-    "README.md",
-    "CLAUDE.md"
+    "dist/"
   ],
   "engines": {
     "node": ">=20.0.0",
