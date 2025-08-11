@@ -4,117 +4,100 @@
 [![TypeScript](https://img.shields.io/badge/%3C%2F%3E-TypeScript-%230074c1.svg)](http://www.typescriptlang.org/)
 [![Bun](https://img.shields.io/badge/Bun-%23000000.svg?style=flat&logo=bun&logoColor=white)](https://bun.sh/)
 
-Une bibliothèque TypeScript moderne pour convertir des documents Office (DOCX) vers le format Markdown, optimisée pour l'écosystème Bun avec support avancé des équations mathématiques et des tableaux.
+A modern TypeScript library for converting Office documents (DOCX) to Markdown format, optimized for the Bun ecosystem with advanced support for mathematical equations and tables.
 
-## 🚀 Fonctionnalités
+## 🚀 Features
 
-- ✅ **Conversion DOCX vers Markdown** avec préservation de la structure
-- ✅ **Support des équations mathématiques** (OMML → LaTeX)
-- ✅ **Gestion des tableaux** avec formatage automatique
-- ✅ **Préservation des styles** (gras, italique, titres)
-- ✅ **Traitement des images** avec texte alternatif
-- ✅ **API simple et avancée** pour différents cas d'usage
-- ✅ **Gestion d'erreurs robuste** avec codes d'erreur spécifiques
-- ✅ **Performance optimisée** avec Bun runtime
-- ✅ **Types TypeScript complets** pour une meilleure DX
+- ✅ **DOCX to Markdown conversion** with structure preservation
+- ✅ **Mathematical equation support** (OMML → LaTeX)
+- ✅ **Table handling** with automatic formatting
+- ✅ **Style preservation** (bold, italic, headings)
+- ✅ **Image processing** with alt text
+- ✅ **Simple and advanced API** for different use cases
+- ✅ **Robust error handling** with specific error codes
+- ✅ **Optimized performance** with Bun runtime
+- ✅ **Complete TypeScript types** for better DX
 
 ## 📦 Installation
 
-### Avec Bun (recommandé)
+### With Bun (recommended)
 ```bash
 bun add @aidalinfo/office-to-markdown
 ```
 
-### Avec npm/yarn/pnpm
+### With npm/yarn/pnpm
 ```bash
 npm install @aidalinfo/office-to-markdown
-# ou
+# or
 yarn add @aidalinfo/office-to-markdown
-# ou  
+# or  
 pnpm add @aidalinfo/office-to-markdown
 ```
 
-### Dépendances requises
-Les dépendances suivantes sont automatiquement installées :
-- `mammoth` - Conversion DOCX vers HTML
-- `turndown` - Conversion HTML vers Markdown  
-- `jszip` - Manipulation des archives ZIP (DOCX)
+### Required Dependencies
+The following dependencies are automatically installed:
+- `mammoth` - DOCX to HTML conversion
+- `turndown` - HTML to Markdown conversion  
+- `jszip` - ZIP archive manipulation (DOCX)
 
-## 🛠️ Workflow de Conversion
+## 🛠️ Conversion Workflow
 
-```mermaid
-graph TD
-    A[Fichier DOCX] --> B[Détection du type]
-    B --> C[Preprocessing]
-    C --> D[Extraction ZIP]
-    D --> E[Traitement OMML → LaTeX]
-    E --> F[Reconstruction DOCX]
-    F --> G[Conversion DOCX → HTML]
-    G --> H[Conversion HTML → Markdown]
-    H --> I[Résultat Markdown]
-    
-    subgraph "Preprocessing"
-        C --> C1[word/document.xml]
-        C --> C2[word/footnotes.xml] 
-        C --> C3[word/endnotes.xml]
-    end
-    
-    subgraph "Conversion Math"
-        E --> E1[Fractions]
-        E --> E2[Exposants/Indices]
-        E --> E3[Racines]
-        E --> E4[Symboles Unicode]
-    end
-```
+The conversion process follows these steps:
 
-## 🎯 Usage Simple
+1. **File Detection** - MIME type and extension verification
+2. **Preprocessing** - DOCX content extraction and modification
+3. **Math Processing** - OMML → LaTeX conversion
+4. **Main Conversion** - DOCX → HTML via mammoth
+5. **Post-processing** - HTML → Markdown with custom rules
 
-### Conversion basique
+## 🎯 Simple Usage
+
+### Basic Conversion
 
 ```typescript
 import { docxToMarkdown } from '@aidalinfo/office-to-markdown';
 
-// Conversion simple d'un fichier
+// Simple file conversion
 const markdown = await docxToMarkdown('./document.docx');
 console.log(markdown);
 ```
 
-### API Avancée
+### Advanced API
 
 ```typescript
 import { OfficeToMarkdown } from '@aidalinfo/office-to-markdown';
 
 const converter = new OfficeToMarkdown({
-  headingStyle: 'atx',           // Utilise ## pour les titres
-  preserveTables: true,          // Préserve les tableaux
-  convertMath: true,             // Convertit les équations en LaTeX
+  headingStyle: 'atx',           // Use ## for headings
+  preserveTables: true,          // Preserve tables
+  convertMath: true,             // Convert equations to LaTeX
 });
 
-// Conversion avec options
+// Conversion with options
 const result = await converter.convertDocx('./document.docx');
-console.log('Titre:', result.title);
-console.log('Contenu:', result.markdown);
+console.log('Title:', result.title);
+console.log('Content:', result.markdown);
 ```
 
-### Conversion depuis différentes sources
+### Conversion from Different Sources
 
 ```typescript
 import { OfficeToMarkdown } from '@aidalinfo/office-to-markdown';
 
 const converter = new OfficeToMarkdown();
 
-// Depuis un chemin de fichier
+// From file path
 const result1 = await converter.convert('./document.docx');
 
-// Depuis un Buffer
+// From Buffer
 const buffer = await Bun.file('./document.docx').arrayBuffer();
 const result2 = await converter.convert(buffer);
 
-// Depuis un fichier Bun
+// From Bun file
 const file = Bun.file('./document.docx');
 const result3 = await converter.convert(file);
 
-// Traitement par lots
+// Batch processing
 const results = await converter.convertMultiple([
   './doc1.docx',
   './doc2.docx',
@@ -122,49 +105,49 @@ const results = await converter.convertMultiple([
 ]);
 ```
 
-## ⚙️ Options de Configuration
+## ⚙️ Configuration Options
 
-| Option | Type | Défaut | Description |
-|--------|------|--------|-------------|
-| `headingStyle` | `'atx' \| 'setext'` | `'atx'` | Style des titres Markdown |
-| `preserveTables` | `boolean` | `true` | Préserver les tableaux |
-| `convertMath` | `boolean` | `true` | Convertir les équations mathématiques |
-| `styleMap` | `string` | - | Mapping personnalisé pour mammoth |
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `headingStyle` | `'atx' \| 'setext'` | `'atx'` | Markdown heading style |
+| `preserveTables` | `boolean` | `true` | Preserve tables |
+| `convertMath` | `boolean` | `true` | Convert mathematical equations |
+| `styleMap` | `string` | - | Custom mapping for mammoth |
 
-## 🔧 Architecture Technique
+## 🔧 Technical Architecture
 
-### Structure des Modules
+### Module Structure
 
 ```
 src/
-├── converters/           # Convertisseurs de documents
-│   ├── base-converter.ts    # Classe de base abstraite
-│   └── docx-converter.ts    # Convertisseur DOCX spécialisé
-├── preprocessing/        # Traitement préliminaire
-│   └── docx-preprocessor.ts # Preprocessing DOCX (math)
-├── math/                # Traitement mathématique
-│   └── omml-processor.ts    # Convertisseur OMML → LaTeX
-├── utils/               # Utilitaires
-│   ├── html-to-markdown.ts # Conversion HTML → Markdown
-│   ├── file-detector.ts     # Détection des types de fichiers
-│   └── error-handler.ts     # Gestion d'erreurs
-└── types/               # Définitions TypeScript
-    ├── converter.ts         # Types pour les convertisseurs
-    ├── result.ts           # Types pour les résultats
-    └── stream-info.ts      # Types pour les informations fichier
+├── converters/           # Document converters
+│   ├── base-converter.ts    # Abstract base class
+│   └── docx-converter.ts    # Specialized DOCX converter
+├── preprocessing/        # Preliminary processing
+│   └── docx-preprocessor.ts # DOCX preprocessing (math)
+├── math/                # Mathematical processing
+│   └── omml-processor.ts    # OMML → LaTeX converter
+├── utils/               # Utilities
+│   ├── html-to-markdown.ts # HTML → Markdown conversion
+│   ├── file-detector.ts     # File type detection
+│   └── error-handler.ts     # Error handling
+└── types/               # TypeScript definitions
+    ├── converter.ts         # Converter types
+    ├── result.ts           # Result types
+    └── stream-info.ts      # File info types
 ```
 
-### Pipeline de Conversion
+### Conversion Pipeline
 
-1. **Détection de fichier** - Vérification du type MIME et extension
-2. **Preprocessing** - Extraction et modification du contenu DOCX
-3. **Traitement mathématique** - Conversion OMML → LaTeX
-4. **Conversion principale** - DOCX → HTML via mammoth
-5. **Post-processing** - HTML → Markdown avec règles personnalisées
+1. **File Detection** - MIME type and extension verification
+2. **Preprocessing** - DOCX content extraction and modification
+3. **Mathematical Processing** - OMML → LaTeX conversion
+4. **Main Conversion** - DOCX → HTML via mammoth
+5. **Post-processing** - HTML → Markdown with custom rules
 
-### Gestion des Équations Mathématiques
+### Mathematical Equation Handling
 
-La conversion des équations suit ce processus :
+The equation conversion follows this process:
 
 ```typescript
 // OMML (Office Math Markup Language)
@@ -186,19 +169,19 @@ La conversion des équations suit ce processus :
 $\frac{1}{2}$
 ```
 
-### Éléments Mathématiques Supportés
+### Supported Mathematical Elements
 
 | OMML | LaTeX | Description |
 |------|-------|-------------|
 | `<m:f>` | `\frac{}{}` | Fractions |
-| `<m:sSup>` | `^{}` | Exposants |
-| `<m:sSub>` | `_{}` | Indices |
-| `<m:rad>` | `\sqrt{}` | Racines carrées |
-| `<m:rad><m:deg>` | `\sqrt[]{}` | Racines n-ièmes |
+| `<m:sSup>` | `^{}` | Exponents |
+| `<m:sSub>` | `_{}` | Subscripts |
+| `<m:rad>` | `\sqrt{}` | Square roots |
+| `<m:rad><m:deg>` | `\sqrt[]{}` | Nth roots |
 
-## 🎨 Exemples d'Usage Avancés
+## 🎨 Advanced Usage Examples
 
-### Gestion d'Erreurs
+### Error Handling
 
 ```typescript
 import { 
@@ -214,46 +197,46 @@ async function convertSafely(filePath: string) {
     return result.markdown;
   } catch (error) {
     if (error instanceof UnsupportedFormatException) {
-      console.error('Format non supporté:', error.message);
+      console.error('Unsupported format:', error.message);
     } else if (error instanceof FileConversionException) {
-      console.error('Erreur de conversion:', error.message);
+      console.error('Conversion error:', error.message);
     } else {
-      console.error('Erreur inattendue:', error.message);
+      console.error('Unexpected error:', error.message);
     }
     throw error;
   }
 }
 ```
 
-### Vérification des Capacités
+### Capability Checking
 
 ```typescript
 import { OfficeToMarkdown } from '@aidalinfo/office-to-markdown';
 
 const converter = new OfficeToMarkdown();
 
-// Vérifier les types supportés
+// Check supported types
 const info = converter.getSupportedTypes();
 console.log('Extensions:', info.extensions); // ['.docx']
-console.log('Types MIME:', info.mimeTypes);
+console.log('MIME types:', info.mimeTypes);
 
-// Vérifier si un fichier est supporté
+// Check if a file is supported
 const isSupported = await converter.isSupported('./document.pdf');
-console.log('PDF supporté:', isSupported); // false
+console.log('PDF supported:', isSupported); // false
 
-// Obtenir des infos sur un fichier
+// Get file information
 const fileInfo = await converter.getFileInfo('./document.docx');
-console.log('Type MIME:', fileInfo.mimetype);
-console.log('Supporté:', fileInfo.supported);
+console.log('MIME type:', fileInfo.mimetype);
+console.log('Supported:', fileInfo.supported);
 ```
 
-### Utilisation avec Node.js
+### Usage with Node.js
 
 ```typescript
 import { readFile } from 'fs/promises';
 import { OfficeToMarkdown } from '@aidalinfo/office-to-markdown';
 
-// Depuis un Buffer Node.js
+// From Node.js Buffer
 const buffer = await readFile('./document.docx');
 const converter = new OfficeToMarkdown();
 const result = await converter.convert(buffer);
@@ -261,30 +244,30 @@ const result = await converter.convert(buffer);
 console.log(result.markdown);
 ```
 
-## 🧪 Tests et Validation
+## 🧪 Testing and Validation
 
-### Résultats des Tests
+### Test Results
 
-- ✅ Conversion HTML → Markdown avec tableaux
-- ✅ Détection des types de fichiers (DOCX vs autres)
-- ✅ Conversion mathématique OMML → LaTeX
-- ✅ Gestion d'erreurs avec codes spécifiques
-- ✅ Pipeline complet testé avec document réel
+- ✅ HTML → Markdown conversion with tables
+- ✅ File type detection (DOCX vs others)
+- ✅ OMML → LaTeX mathematical conversion
+- ✅ Error handling with specific codes
+- ✅ Complete pipeline tested with real documents
 
 ### Performance
 
-- **Vitesse** : ~80ms pour un document de taille moyenne (7KB)
-- **Fidélité** : Préservation complète de la structure et du contenu
-- **Robustesse** : Gestion gracieuse des erreurs avec fallbacks
+- **Speed**: ~80ms for an average document (7KB)
+- **Fidelity**: Complete preservation of structure and content
+- **Robustness**: Graceful error handling with fallbacks
 
-## 🔧 Développement
+## 🔧 Development
 
-### Prérequis
+### Prerequisites
 
-- **Bun** >= 1.2.0 (recommandé) ou **Node.js** >= 20.0.0
+- **Bun** >= 1.2.0 (recommended) or **Node.js** >= 20.0.0
 - **TypeScript** >= 4.5.0
 
-### Installation pour développement
+### Development Installation
 
 ```bash
 git clone https://github.com/aidalinfo/extract-kit.git
@@ -292,62 +275,62 @@ cd extract-kit/packages/office-to-markdown
 bun install
 ```
 
-### Scripts disponibles
+### Available Scripts
 
 ```bash
-bun run build          # Build complet (ESM + types)
-bun run dev            # Mode développement avec watch
-bun run clean          # Nettoie le dossier dist/
+bun run build          # Complete build (ESM + types)
+bun run dev            # Development mode with watch
+bun run clean          # Clean dist/ folder
 ```
 
-### Tests
+### Testing
 
 ```bash
-# Test basique des fonctionnalités
+# Basic functionality test
 bun run src/test.ts
 
-# Test avec un fichier DOCX réel
-bun run test-docx.ts "votre-fichier.docx"
+# Test with real DOCX file
+bun run test-docx.ts "your-file.docx"
 ```
 
 ## 🚀 Roadmap
 
-- [ ] **Support des formats PPT/PPTX** - Conversion des présentations
-- [ ] **Support des formats XLS/XLSX** - Conversion des feuilles de calcul
-- [ ] **API de streaming** - Traitement de gros fichiers en streaming
-- [ ] **Plugin système** - Support pour convertisseurs personnalisés
-- [ ] **Interface web** - Interface utilisateur optionnelle
-- [ ] **Support des images embedded** - Extraction et conversion des images
-- [ ] **Mode batch CLI** - Interface en ligne de commande
+- [ ] **PPT/PPTX format support** - Presentation conversion
+- [ ] **XLS/XLSX format support** - Spreadsheet conversion
+- [ ] **Streaming API** - Large file streaming processing
+- [ ] **Plugin system** - Support for custom converters
+- [ ] **Web interface** - Optional user interface
+- [ ] **Embedded image support** - Image extraction and conversion
+- [ ] **CLI batch mode** - Command-line interface
 
-## 🤝 Contribution
+## 🤝 Contributing
 
-Les contributions sont les bienvenues ! Consultez notre [guide de contribution](https://github.com/aidalinfo/extract-kit/blob/main/CONTRIBUTING.md).
+Contributions are welcome! Please see our [contribution guide](https://github.com/aidalinfo/extract-kit/blob/main/CONTRIBUTING.md).
 
-### Processus de contribution
+### Contribution Process
 
-1. **Fork** le repository
-2. **Créer** une branche de fonctionnalité (`git checkout -b feature/amazing-feature`)
-3. **Commiter** vos changements (`git commit -m 'Add amazing feature'`)
-4. **Push** vers la branche (`git push origin feature/amazing-feature`)
-5. **Ouvrir** une Pull Request
+1. **Fork** the repository
+2. **Create** a feature branch (`git checkout -b feature/amazing-feature`)
+3. **Commit** your changes (`git commit -m 'Add amazing feature'`)
+4. **Push** to the branch (`git push origin feature/amazing-feature`)
+5. **Open** a Pull Request
 
-## 📄 Licence
+## 📄 License
 
-Ce projet est sous licence **ISC** - voir le fichier [LICENSE](LICENSE) pour plus de détails.
+This project is licensed under **ISC** - see the [LICENSE](LICENSE) file for details.
 
-## 🙏 Remerciements
+## 🙏 Acknowledgments
 
-- Inspiré par le projet [MarkItDown](https://github.com/microsoft/markitdown) de Microsoft
-- Utilise [mammoth.js](https://github.com/mwilliamson/mammoth.js) pour la conversion DOCX → HTML  
-- Utilise [turndown](https://github.com/mixmark-io/turndown) pour la conversion HTML → Markdown
-- Optimisé pour le runtime [Bun](https://bun.sh/)
+- Inspired by Microsoft's [MarkItDown](https://github.com/microsoft/markitdown) project
+- Uses [mammoth.js](https://github.com/mwilliamson/mammoth.js) for DOCX → HTML conversion  
+- Uses [turndown](https://github.com/mixmark-io/turndown) for HTML → Markdown conversion
+- Optimized for [Bun](https://bun.sh/) runtime
 
 ## 📞 Support
 
-- **Issues** : [GitHub Issues](https://github.com/aidalinfo/extract-kit/issues)
-- **Documentation** : [GitHub Repository](https://github.com/aidalinfo/extract-kit/tree/main/packages/office-to-markdown)
-- **Email** : contact@aidalinfo.com
+- **Issues**: [GitHub Issues](https://github.com/aidalinfo/extract-kit/issues)
+- **Documentation**: [GitHub Repository](https://github.com/aidalinfo/extract-kit/tree/main/packages/office-to-markdown)
+- **Email**: contact@aidalinfo.com
 
 ---
 
@@ -355,6 +338,6 @@ Ce projet est sous licence **ISC** - voir le fichier [LICENSE](LICENSE) pour plu
   
 **[@aidalinfo/office-to-markdown](https://www.npmjs.com/package/@aidalinfo/office-to-markdown)**
 
-*Conversion DOCX vers Markdown simple, rapide et fiable* ⚡
+*Simple, fast, and reliable DOCX to Markdown conversion* ⚡
 
 </div>
