@@ -9,7 +9,7 @@ import { describe, test, expect } from 'bun:test';
 import path from 'path';
 
 describe('Configuration pdfProcessor', () => {
-  const testPdfPath = path.join(__dirname, '../data/invoice_1.pdf');
+  const testPdfPath = path.join(__dirname, '../data/facture3.pdf');
   const testApiKey = process.env.TEST_SCALEWAY_KEY;
 
   test('devrait extraire une facture avec configuration objet', async () => {
@@ -23,7 +23,7 @@ describe('Configuration pdfProcessor', () => {
     const pdfProcessor: PdfProcessorConfig = {
       providers: {
         scaleway: {
-          model: "pixtral-12b-2409",
+          model: "mistral-small-3.1-24b-instruct-2503",
           apiKey: testApiKey,
           baseURL: "https://api.scaleway.ai/v1"
         }
@@ -52,5 +52,5 @@ describe('Configuration pdfProcessor', () => {
 
     console.log('✅ Extraction réussie avec configuration objet');
     console.log('📊 Résultat:', JSON.stringify(result, null, 2));
-  }, 30000); // Timeout 30 secondes
+  }, 120000); // Timeout 30 secondes
 });
