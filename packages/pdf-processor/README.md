@@ -1,16 +1,18 @@
-# Extract Kit 🚀
+# PDF Processor
 
-Welcome to **Extract Kit** - a powerful, modern PDF data extraction solution powered by AI vision models! Transform your PDFs into structured, validated data with ease.
+> This library is part of the [Extract Kit](https://github.com/aidalinfo/extract-kit) monorepo.
+
+Welcome to **PDF Processor** - a powerful, modern PDF data extraction solution powered by AI vision models! Transform your PDFs into structured, validated data with ease.
 
 > 🌟 **Inspired by [Sparrow](https://github.com/katanaml/sparrow)** - This project builds upon the innovative concepts from Katana ML's Sparrow framework, reimagined with modern TypeScript, Bun runtime, and enhanced AI vision capabilities. 
 
-## 🎯 What is Extract Kit?
+## 🎯 What is PDF Processor?
 
-Extract Kit is a production-ready TypeScript/Bun-based service that leverages cutting-edge AI vision models to intelligently extract structured data from PDF documents. Whether you're processing invoices, receipts, tables, or custom documents, Extract Kit makes it simple and reliable.
+PDF Processor is a production-ready TypeScript/Bun-based service that leverages cutting-edge AI vision models to intelligently extract structured data from PDF documents. Whether you're processing invoices, receipts, tables, or custom documents, this library makes it simple and reliable.
 
 ## ✨ Key Features
 
-- **🤖 AI-Powered Extraction**: Harness the power of Scaleway Pixtral and Ollama LLaVA vision models
+- **🤖 AI-Powered Extraction**: Harness the power of Scaleway Pixtral, Mistral AI, Ollama LLaVA, and custom providers
 - **📄 Smart PDF Processing**: Automatic PDF to optimized image conversion using Sharp
 - **⚡ Lightning Fast**: Built on Bun runtime with parallel worker processing for maximum performance
 - **🔒 Type-Safe**: Full TypeScript implementation with Zod schema validation
@@ -21,12 +23,12 @@ Extract Kit is a production-ready TypeScript/Bun-based service that leverages cu
 
 ## 🏗️ Architecture
 
-Extract Kit follows a modular, scalable architecture:
+This package is part of the `extract-kit` monorepo:
 
 ```
 extract-kit/
 ├── packages/
-│   └── pdf-processor/          # Core extraction service
+│   └── pdf-processor/
 │       ├── src/
 │       │   ├── api/           # REST API endpoints
 │       │   ├── core/          # Business logic & AI integration
@@ -56,7 +58,7 @@ extract-kit/
 3. **Configure environment**
    ```bash
    cp ../../example.env.development .env
-   # Add your Scaleway API key or Ollama configuration
+   # Add your Scaleway, Mistral AI, or custom provider API keys
    ```
 
 4. **Start the server**
@@ -69,24 +71,46 @@ extract-kit/
 ### Extract Invoice Data
 
 ```bash
+# Using Scaleway
 curl -X POST http://localhost:3000/api/v1/vision/invoice \
   -F "file=@invoice.pdf" \
   -F "provider=scaleway"
+
+# Using Mistral AI
+curl -X POST http://localhost:3000/api/v1/vision/invoice \
+  -F "file=@invoice.pdf" \
+  -F "provider=mistral" \
+  -F "model=pixtral-large-latest"
 ```
 
 ### Extract Tables
 
 ```bash
+# Default provider
 curl -X POST http://localhost:3000/api/v1/vision/tables \
   -F "file=@report.pdf"
+
+# Using Mistral AI
+curl -X POST http://localhost:3000/api/v1/vision/tables \
+  -F "file=@report.pdf" \
+  -F "provider=mistral"
 ```
 
 ### Custom Extraction
 
 ```bash
+# Using Scaleway
 curl -X POST http://localhost:3000/api/v1/vision/extract \
   -F "file=@document.pdf" \
   -F "provider=scaleway" \
+  -F "documentType=custom" \
+  -F "query=Extract all product information"
+
+# Using Custom Provider
+curl -X POST http://localhost:3000/api/v1/vision/extract \
+  -F "file=@document.pdf" \
+  -F "provider=custom" \
+  -F "model=your-model-name" \
   -F "documentType=custom" \
   -F "query=Extract all product information"
 ```
@@ -167,6 +191,16 @@ const pdfProcessor: PdfProcessorConfig = {
     ollama: {
       model: "llava:13b",
       baseURL: "http://localhost:11434" // optional, defaults to localhost
+    },
+    mistral: {
+      model: "pixtral-large-latest", // Best for OCR/vision
+      apiKey: "your-mistral-api-key",
+      baseURL: "https://api.mistral.ai/v1" // optional
+    },
+    custom: {
+      model: "your-model-name",
+      apiKey: "your-api-key",
+      baseURL: "https://your-api-endpoint.com/v1" // required
     }
   }
 };
@@ -268,6 +302,8 @@ import type {
 # AI Provider Configuration
 EK_AI_API_KEY=your-scaleway-api-key
 EK_AI_BASE_URL=https://api.scaleway.ai/v1
+EK_MISTRAL_API_KEY=your-mistral-api-key  # For Mistral AI
+CUSTOM_API_KEY=your-custom-api-key    # For custom providers
 
 # Server Configuration
 PORT=3000
@@ -287,9 +323,21 @@ EK_TMPDIR=/tmp
 - **Models**: `pixtral-12b-2409`, `mistral-small-3.1-24b-instruct-2503`
 - **Best for**: Production deployments, high accuracy
 
+#### Mistral AI (Cloud)
+- **Models**: 
+  - `pixtral-large-latest` - Best for OCR and vision tasks
+  - `mistral-medium-latest` - Alternative model for text extraction
+- **Best for**: High-quality OCR, document understanding, complex layouts
+- **Note**: Requires EK_MISTRAL_API_KEY or configuration object
+
 #### Ollama (Local)
 - **Models**: `llava:latest`, `llava:13b`, `llava:34b`
 - **Best for**: Privacy-sensitive data, offline processing
+
+#### Custom Provider (Self-hosted/Proprietary)
+- **Models**: Any OpenAI-compatible vision model
+- **Best for**: Enterprise deployments, proprietary AI services, custom models
+- **Requirements**: API key and base URL configuration
 
 ## 📊 Extraction Capabilities
 
@@ -361,7 +409,6 @@ We welcome contributions! Here's how you can help:
 
 For detailed documentation, check out:
 - [API Documentation](./packages/pdf-processor/README.md)
-- [Vision Processing Guide](./packages/pdf-processor/VISION_README.md)
 - [Development Plan](./sparrow-doc/plan_detailled.md)
 
 ## 🐛 Troubleshooting
@@ -377,7 +424,7 @@ For detailed documentation, check out:
 
 ## 📄 License
 
-This project is licensed under the ISC License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## 🙏 Acknowledgments
 
@@ -389,10 +436,10 @@ This project is licensed under the ISC License - see the LICENSE file for detail
 ## 💬 Support
 
 Need help? 
-- Check the [documentation](./packages/pdf-processor/README.md)
+- Check the [documentation](https://github.com/aidalinfo/extract-kit/blob/main/packages/pdf-processor/README.md)
 - Open an [issue](https://github.com/aidalinfo/extract-kit/issues)
 - Contact the maintainers
 
 ---
 
-**Happy Extracting!** 🎉 Transform your PDFs into actionable data with Extract Kit!
+**Happy Extracting!** 🎉 Transform your PDFs into actionable data with PDF Processor!

@@ -1,385 +1,56 @@
 # Extract Kit 🚀
 
-Welcome to **Extract Kit** - a powerful, modern PDF data extraction solution powered by AI vision models! Transform your PDFs into structured, validated data with ease.
+Welcome to **Extract Kit** - a powerful, modern solution for document data extraction and conversion, powered by AI vision models! Transform your PDFs and Office documents into structured, validated data with ease.
 
-> 🌟 **Inspired by [Sparrow](https://github.com/katanaml/sparrow)** - This project builds upon the innovative concepts from Katana ML's Sparrow framework, reimagined with modern TypeScript, Bun runtime, and enhanced AI vision capabilities. 
+> 🌟 **Inspired by [Sparrow](https://github.com/katanaml/sparrow)** - This project builds upon the innovative concepts from Katana ML's Sparrow framework, reimagined with modern TypeScript, Bun runtime, and enhanced AI vision capabilities.
 
 ## 🎯 What is Extract Kit?
 
-Extract Kit is a production-ready TypeScript/Bun-based service that leverages cutting-edge AI vision models to intelligently extract structured data from PDF documents. Whether you're processing invoices, receipts, tables, or custom documents, Extract Kit makes it simple and reliable.
+Extract Kit is a monorepo containing a suite of production-ready TypeScript/Bun-based tools that leverage cutting-edge AI vision models and advanced parsing techniques to intelligently extract and convert data from various document formats.
+
+## 🛠️ Available Packages
+
+This repository contains the following open-source packages:
+
+### 1. PDF Processor
+
+[![npm version](https://badge.fury.io/js/%40aidalinfo%2Fpdf-processor.svg)](https://www.npmjs.com/package/@aidalinfo/pdf-processor)
+[![npm downloads](https://img.shields.io/npm/dm/@aidalinfo/pdf-processor.svg?style=flat-square)](https://www.npmjs.com/package/@aidalinfo/pdf-processor)
+
+A service that leverages cutting-edge AI vision models (Scaleway, Mistral, Ollama) to intelligently extract structured data from PDF documents. It's perfect for processing invoices, receipts, tables, or any custom document type.
+
+- **NPM Package**: [`@aidalinfo/pdf-processor`](https://www.npmjs.com/package/@aidalinfo/pdf-processor)
+- **Documentation**: [Read the PDF Processor README](./packages/pdf-processor/README.md)
+
+### 2. Office to Markdown
+
+[![npm version](https://badge.fury.io/js/%40aidalinfo%2Foffice-to-markdown.svg)](https://www.npmjs.com/package/@aidalinfo/office-to-markdown)
+[![npm downloads](https://img.shields.io/npm/dm/@aidalinfo/office-to-markdown.svg?style=flat-square)](https://www.npmjs.com/package/@aidalinfo/office-to-markdown)
+
+A modern TypeScript library for converting Office documents (DOCX) to Markdown format. It's optimized for the Bun ecosystem and includes advanced support for mathematical equations (OMML) and tables.
+
+- **NPM Package**: [`@aidalinfo/office-to-markdown`](https://www.npmjs.com/package/@aidalinfo/office-to-markdown)
+- **Documentation**: [Read the Office to Markdown README](./packages/office-to-markdown/README.md)
 
 ## ✨ Key Features
 
-- **🤖 AI-Powered Extraction**: Harness the power of Scaleway Pixtral, Mistral AI, and Ollama LLaVA vision models
-- **📄 Smart PDF Processing**: Automatic PDF to optimized image conversion using Sharp
-- **⚡ Lightning Fast**: Built on Bun runtime with parallel worker processing for maximum performance
-- **🔒 Type-Safe**: Full TypeScript implementation with Zod schema validation
-- **📊 Structured Logging**: Professional-grade logging with Pino for debugging and monitoring
-- **🌐 REST API Ready**: Deploy as a microservice with built-in CORS support
-- **📦 Library Mode**: Use as a Node.js/Bun package in your existing projects
-- **🎨 Image Optimization**: Automatic contrast enhancement and quality optimization for better AI recognition
-
-## 🏗️ Architecture
-
-Extract Kit follows a modular, scalable architecture:
-
-```
-extract-kit/
-├── packages/
-│   └── pdf-processor/          # Core extraction service
-│       ├── src/
-│       │   ├── api/           # REST API endpoints
-│       │   ├── core/          # Business logic & AI integration
-│       │   │   ├── vision/    # Vision processing pipeline
-│       │   │   ├── workers/   # Parallel processing workers
-│       │   │   └── schemas/   # Zod validation schemas
-│       │   ├── lib/           # Public library interface
-│       │   └── utils/         # Utilities & logging
-│       └── package.json
-├── docker-compose-dev.yml      # Development environment
-└── example.env.development     # Environment template
-```
+- **🤖 AI-Powered Extraction**: Harness the power of Scaleway Pixtral, Mistral AI, Ollama LLaVA, and custom AI providers for PDF processing.
+- **🔄 Advanced DOCX Conversion**: Convert `.docx` files to clean Markdown, preserving structure, styles, and even complex mathematical equations.
+- **📄 Smart PDF Processing**: Automatic PDF to optimized image conversion using Sharp for better AI recognition.
+- **⚡ Lightning Fast**: Built on Bun runtime with parallel worker processing for maximum performance.
+- **🔒 Type-Safe**: Full TypeScript implementation with Zod schema validation for reliable data extraction.
+- **📦 Dual Mode**: Use as a standalone REST API microservice or as a library in your existing Node.js/Bun projects.
 
 ## 🚀 Quick Start
 
-### Manual Installation
+For detailed instructions, please refer to the README file of the specific package you want to use:
 
-1. **Install Bun** (if not already installed)
-   ```bash
-   curl -fsSL https://bun.sh/install | bash
-   ```
-
-2. **Install dependencies**
-   ```bash
-   cd packages/pdf-processor
-   bun install
-   ```
-
-3. **Configure environment**
-   ```bash
-   cp ../../example.env.development .env
-   # Add your Scaleway, Mistral API key or Ollama configuration
-   ```
-
-4. **Start the server**
-   ```bash
-   bun run dev
-   ```
-
-## 📡 API Usage
-
-### Extract Invoice Data
-
-```bash
-# Using Scaleway
-curl -X POST http://localhost:3000/api/v1/vision/invoice \
-  -F "file=@invoice.pdf" \
-  -F "provider=scaleway"
-
-# Using Mistral AI with pixtral-large-latest (OCR model)
-curl -X POST http://localhost:3000/api/v1/vision/invoice \
-  -F "file=@invoice.pdf" \
-  -F "provider=mistral" \
-  -F "model=pixtral-large-latest"
-```
-
-### Extract Tables
-
-```bash
-# Default provider
-curl -X POST http://localhost:3000/api/v1/vision/tables \
-  -F "file=@report.pdf"
-
-# Using Mistral AI with mistral-medium-latest
-curl -X POST http://localhost:3000/api/v1/vision/tables \
-  -F "file=@report.pdf" \
-  -F "provider=mistral" \
-  -F "model=mistral-medium-latest"
-```
-
-### Custom Extraction
-
-```bash
-curl -X POST http://localhost:3000/api/v1/vision/extract \
-  -F "file=@document.pdf" \
-  -F "provider=mistral" \
-  -F "documentType=custom" \
-  -F "query=Extract all product information"
-```
-
-## 📦 Using as a Library
-
-📦 **NPM Package**: [@aidalinfo/pdf-processor](https://www.npmjs.com/package/@aidalinfo/pdf-processor)
-
-### Installation
-
-```bash
-# Using npm
-npm install @aidalinfo/pdf-processor
-
-# Using bun
-bun add @aidalinfo/pdf-processor
-
-# Using yarn
-yarn add @aidalinfo/pdf-processor
-```
-
-### Basic Usage
-
-```typescript
-import { extractInvoicePdf, extractTablesPdf, extractPdf, schemas } from '@aidalinfo/pdf-processor';
-
-// Extract invoice data with validation
-const invoice = await extractInvoicePdf('path/to/invoice.pdf', {
-  provider: 'scaleway',
-  enhanceContrast: true
-});
-
-console.log(`Invoice #${invoice.invoice_details?.invoice_number}`);
-console.log(`Total: ${invoice.financial_totals?.total_amount}`);
-
-// Extract tables from any document
-const tables = await extractTablesPdf('path/to/report.pdf');
-tables.detected_tables.forEach(table => {
-  console.log(`Found table: ${table.table_name}`);
-  console.log(`Headers: ${table.headers.join(', ')}`);
-});
-
-// Custom extraction with your own schema
-const customData = await extractPdf('document.pdf', schemas.invoice, {
-  provider: 'scaleway',
-  model: 'pixtral-12b-2409'
-});
-```
-
-### Configuration Options
-
-#### Method 1: Environment Variables (Traditional)
-
-```bash
-# Set environment variables
-export EK_AI_API_KEY="your-scaleway-api-key"
-export EK_AI_BASE_URL="https://api.scaleway.ai/v1"
-```
-
-```typescript
-// Use with environment variables
-const invoice = await extractInvoicePdf('invoice.pdf', {
-  provider: 'scaleway'
-});
-```
-
-#### Method 2: Configuration Object (New & Recommended)
-
-```typescript
-import { extractInvoicePdf, type PdfProcessorConfig } from '@aidalinfo/pdf-processor';
-
-// Configure providers programmatically
-const pdfProcessor: PdfProcessorConfig = {
-  providers: {
-    scaleway: {
-      model: "mistral-small-3.1-24b-instruct-2503",
-      apiKey: "your-scaleway-api-key",
-      baseURL: "https://api.scaleway.ai/v1" // optional
-    },
-    mistral: {
-      model: "pixtral-large-latest", // or "mistral-medium-latest"
-      apiKey: "your-mistral-api-key",
-      baseURL: "https://api.mistral.ai/v1" // optional
-    },
-    ollama: {
-      model: "llava:13b",
-      baseURL: "http://localhost:11434" // optional, defaults to localhost
-    }
-  }
-};
-
-// Use configuration object
-const invoice = await extractInvoicePdf('invoice.pdf', {
-  provider: 'scaleway',
-  pdfProcessor
-});
-
-// Configuration takes priority over environment variables
-const receipt = await extractReceiptPdf('receipt.pdf', {
-  provider: 'ollama',
-  pdfProcessor
-});
-
-// Using Mistral AI for OCR tasks
-const mistralResult = await extractInvoicePdf('invoice.pdf', {
-  provider: 'mistral',
-  model: 'pixtral-large-latest', // Best for OCR/vision tasks
-  pdfProcessor
-});
-```
-
-### Advanced Features
-
-#### With Detailed Metadata
-
-```typescript
-import { extractPdfWithMetadata } from '@aidalinfo/pdf-processor';
-
-const result = await extractPdfWithMetadata('document.pdf', schemas.invoice, {
-  provider: 'scaleway',
-  pdfProcessor
-});
-
-console.log('Extracted data:', result.data);
-console.log('Processing time:', result.metadata.processingTime);
-console.log('Pages processed:', result.metadata.pageCount);
-console.log('Model used:', result.metadata.model);
-```
-
-#### Custom Models and Settings
-
-```typescript
-const advancedConfig: PdfProcessorConfig = {
-  providers: {
-    scaleway: {
-      model: "mistral-small-3.1-24b-instruct-2503", // Different model
-      apiKey: "your-api-key",
-      baseURL: "https://custom-endpoint.ai/v1"
-    }
-  }
-};
-
-const result = await extractInvoicePdf('invoice.pdf', {
-  provider: 'scaleway',
-  enhanceContrast: true,
-  targetQuality: 90,
-  dpi: 300,
-  maxRetries: 3,
-  pdfProcessor: advancedConfig
-});
-```
-
-### Available Functions
-
-| Function | Description | Returns |
-|----------|-------------|---------|
-| `extractInvoicePdf()` | Extract complete invoice data | `ComprehensiveInvoice` |
-| `extractTablesPdf()` | Extract tables and tabular data | `TablesOnly` |
-| `extractReceiptPdf()` | Extract receipt data | `BasicReceipt` |
-| `extractPdf()` | Custom extraction with your schema | Generic `T` |
-| `extractPdfWithMetadata()` | Extract with processing metadata | `ExtractResult<T>` |
-
-### Configuration Priority
-
-The library uses the following priority order:
-
-1. **Configuration object** (`pdfProcessor` parameter)
-2. **Environment variables** (`EK_AI_API_KEY`, `EK_AI_BASE_URL`)  
-3. **Default values**
-
-This allows you to mix approaches - for example, use environment variables for API keys and configuration objects for model selection.
-
-### TypeScript Support
-
-Full TypeScript support with exported types:
-
-```typescript
-import type { 
-  PdfProcessorConfig, 
-  ProviderConfig,
-  ComprehensiveInvoice,
-  TablesOnly,
-  BasicReceipt,
-  ExtractOptions
-} from '@aidalinfo/pdf-processor';
-```
-
-## 🔧 Configuration
-
-### Environment Variables
-
-```env
-# AI Provider Configuration
-EK_AI_API_KEY=your-scaleway-api-key
-EK_AI_BASE_URL=https://api.scaleway.ai/v1
-
-# Server Configuration
-PORT=3000
-EK_NODE_ENV=development
-EK_LOG_LEVEL=info
-
-# Performance Tuning
-EK_ENABLE_WORKERS=true
-EK_PDF_WORKERS=2
-EK_VISION_WORKERS=3
-EK_TMPDIR=/tmp
-```
-
-### Supported AI Providers
-
-#### Scaleway AI (Cloud)
-- **Models**: `pixtral-12b-2409`, `mistral-small-3.1-24b-instruct-2503`
-- **Best for**: Production deployments, high accuracy
-
-#### Ollama (Local)
-- **Models**: `llava:latest`, `llava:13b`, `llava:34b`
-- **Best for**: Privacy-sensitive data, offline processing
-
-## 📊 Extraction Capabilities
-
-### Document Types
-
-- **📄 Invoices**: Complete invoice extraction with line items, totals, and vendor details
-- **🧾 Receipts**: Receipt parsing with items, prices, and transaction information
-- **📊 Tables**: Automatic table detection and structured data extraction
-- **📝 Custom**: Define your own schemas for any document type
-
-### Data Validation
-
-All extracted data is validated using Zod schemas, ensuring:
-- Type safety
-- Consistent structure
-- Null-safe handling
-- Custom validation rules
-
-## 🎯 Use Cases
-
-- **Accounts Payable Automation**: Automate invoice processing and data entry
-- **Expense Management**: Extract receipt data for expense reports
-- **Data Migration**: Convert legacy PDF documents to structured databases
-- **Business Intelligence**: Extract tables and charts for analysis
-- **Compliance & Auditing**: Structured extraction for regulatory reporting
-
-## 🛠️ Development
-
-### Running Tests
-```bash
-bun test
-```
-
-### Development Mode
-```bash
-bun run dev  # Hot reload enabled
-```
-
-### Building for Production
-```bash
-bun run build
-```
-
-## 📈 Performance
-
-- **Processing Speed**: ~2-5 seconds per page (depending on complexity)
-- **Accuracy**: 95%+ for standard invoice formats
-- **Concurrent Processing**: Handles multiple PDFs simultaneously
-- **Memory Efficient**: Streaming processing for large documents
-
-## 🔐 Security
-
-- API key authentication
-- Input validation and sanitization
-- No data persistence (stateless processing)
-- Docker containerization for isolation
+- **For PDF Extraction**: [`packages/pdf-processor/README.md`](./packages/pdf-processor/README.md)
+- **For DOCX Conversion**: [`packages/office-to-markdown/README.md`](https://github.com/aidalinfo/extract-kit/blob/main/packages/office-to-markdown/README.md)
 
 ## 🤝 Contributing
 
-We welcome contributions! Here's how you can help:
+We welcome contributions! Please read our contribution guidelines (coming soon). For now, you can:
 
 1. Fork the repository
 2. Create your feature branch (`git checkout -b feature/amazing-feature`)
@@ -387,42 +58,16 @@ We welcome contributions! Here's how you can help:
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## 📚 Documentation
-
-For detailed documentation, check out:
-- [API Documentation](./packages/pdf-processor/README.md)
-- [Vision Processing Guide](./packages/pdf-processor/VISION_README.md)
-- [Development Plan](./sparrow-doc/plan_detailled.md)
-
-## 🐛 Troubleshooting
-
-### Common Issues
-
-| Issue | Solution |
-|-------|----------|
-| `EK_AI_API_KEY not found` | Set your API key in the `.env` file |
-| `Port already in use` | Change the port in `.env` or stop the conflicting service |
-| `Worker timeout` | Increase worker timeout in environment variables |
-| `PDF processing failed` | Ensure the PDF is valid and not password-protected |
-
 ## 📄 License
 
-This project is licensed under the ISC License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## 🙏 Acknowledgments
 
-- Built with [Bun](https://bun.sh/) - The fast JavaScript runtime
-- Powered by [Scaleway AI](https://www.scaleway.com/en/ai/) and [Ollama](https://ollama.ai/)
-- Image processing by [Sharp](https://sharp.pixelplumbing.com/)
-- Schema validation by [Zod](https://zod.dev/)
-
-## 💬 Support
-
-Need help? 
-- Check the [documentation](./packages/pdf-processor/README.md)
-- Open an [issue](https://github.com/aidalinfo/extract-kit/issues)
-- Contact the maintainers
+- Built with [Bun](https://bun.sh/) - The fast JavaScript runtime.
+- PDF Processor is powered by [Scaleway AI](https://www.scaleway.com/en/ai/), [Mistral AI](https://mistral.ai/), and [Ollama](https://ollama.ai/).
+- Office to Markdown is inspired by Microsoft's [MarkItDown](https://github.com/microsoft/markitdown).
 
 ---
 
-**Happy Extracting!** 🎉 Transform your PDFs into actionable data with Extract Kit!
+**Happy Extracting!** 🎉

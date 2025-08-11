@@ -1,17 +1,78 @@
 {
-  "name": "office-to-markdown",
-  "module": "src/index.ts",
+  "name": "@aidalinfo/office-to-markdown",
+  "version": "1.0.1",
+  "description": "Modern TypeScript library for converting Office documents (DOCX) to Markdown format, optimized for Bun runtime with enhanced table support and math equation conversion.",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
   "type": "module",
-  "devDependencies": {
-    "@types/bun": "latest"
+  "private": false,
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   },
-  "peerDependencies": {
-    "typescript": "^5"
+  "scripts": {
+    "dev": "bun run --watch src/index.ts",
+    "start": "bun run src/index.ts",
+    "build": "bun run clean && bun run build:esm && bun run build:types",
+    "build:esm": "bun build src/index.ts --outdir dist --format esm --target node --external mammoth --external turndown --external jszip",
+    "build:types": "tsc --project tsconfig.build.json",
+    "test": "bun test",
+    "prepublishOnly": "bun run build",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "office",
+    "docx",
+    "markdown",
+    "document-conversion",
+    "office-to-markdown",
+    "docx-to-markdown",
+    "mammoth",
+    "turndown",
+    "typescript",
+    "bun",
+    "math-equations",
+    "omml",
+    "latex",
+    "table-conversion",
+    "document-processing"
+  ],
+  "author": {
+    "name": "aidalinfo",
+    "email": "contact@aidalinfo.com"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/aidalinfo/extract-kit#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aidalinfo/extract-kit.git",
+    "directory": "packages/office-to-markdown"
+  },
+  "bugs": {
+    "url": "https://github.com/aidalinfo/extract-kit/issues"
+  },
+  "files": [
+    "dist/"
+  ],
+  "engines": {
+    "node": ">=20.0.0",
+    "bun": ">=1.2.0"
   },
   "dependencies": {
-    "@types/node": "^24.2.1",
     "jszip": "^3.10.1",
     "mammoth": "^1.10.0",
     "turndown": "^7.2.0"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/node": "^24.2.1",
+    "@types/turndown": "^5.0.5",
+    "bun": "^1.2.19",
+    "bun-types": "latest",
+    "typescript": "^5.4.2"
+  },
+  "peerDependencies": {
+    "typescript": ">=4.5.0"
   }
 }

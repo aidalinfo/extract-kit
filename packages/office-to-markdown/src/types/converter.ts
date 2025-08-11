@@ -97,3 +97,31 @@ export class UnsupportedFormatException extends Error {
     this.name = "UnsupportedFormatException";
   }
 }
+
+/**
+ * Common interface for all file converters
+ */
+export interface IDocumentConverter {
+  /** Check if this converter can handle the given file */
+  accepts(buffer: Buffer, streamInfo: StreamInfo): boolean;
+  
+  /** Convert the file to Markdown */
+  convert(buffer: Buffer, streamInfo: StreamInfo, options?: ConverterOptions): Promise<DocumentConverterResult>;
+  
+  /** Get information about this converter's capabilities */
+  getConversionInfo(): ConverterInfo;
+}
+
+/**
+ * Information about a converter's capabilities
+ */
+export interface ConverterInfo {
+  /** Supported file extensions */
+  supportedExtensions: string[];
+  /** Supported MIME types */
+  supportedMimeTypes: string[];
+  /** List of features this converter supports */
+  features: string[];
+  /** Converter name/identifier */
+  name?: string;
+}

@@ -115,7 +115,7 @@ export class AIGenerator {
         const mistralBaseURL = providerConfig?.baseURL;
         
         if (!mistralApiKey) {
-          throw new Error('Mistral API key requis: fournissez-le via pdfProcessor.providers.mistral.apiKey ou MISTRAL_API_KEY');
+          throw new Error('Mistral API key requis: fournissez-le via pdfProcessor.providers.mistral.apiKey ou EK_MISTRAL_API_KEY');
         }
         
         const mistralConfig: any = { apiKey: mistralApiKey, baseURL: 'https://api.mistral.ai/v1' };
