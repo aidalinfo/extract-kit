@@ -76,7 +76,7 @@ extract-kit/
 ### Environment Setup
 1. **Required**: Set API keys for your chosen provider:
    - Scaleway: `EK_AI_API_KEY`
-   - Mistral AI: `MISTRAL_API_KEY`
+   - Mistral AI: `EK_MISTRAL_API_KEY`
 2. **Optional**: Configure `EK_AI_BASE_URL` for different AI providers
 3. **Performance**: Adjust worker counts via `EK_PDF_WORKERS` and `EK_VISION_WORKERS`
 

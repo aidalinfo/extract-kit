@@ -300,7 +300,7 @@ import type {
 # AI Provider Configuration
 EK_AI_API_KEY=your-scaleway-api-key
 EK_AI_BASE_URL=https://api.scaleway.ai/v1
-MISTRAL_API_KEY=your-mistral-api-key  # For Mistral AI
+EK_MISTRAL_API_KEY=your-mistral-api-key  # For Mistral AI
 CUSTOM_API_KEY=your-custom-api-key    # For custom providers
 
 # Server Configuration
@@ -326,7 +326,7 @@ EK_TMPDIR=/tmp
   - `pixtral-large-latest` - Best for OCR and vision tasks
   - `mistral-medium-latest` - Alternative model for text extraction
 - **Best for**: High-quality OCR, document understanding, complex layouts
-- **Note**: Requires MISTRAL_API_KEY or configuration object
+- **Note**: Requires EK_MISTRAL_API_KEY or configuration object
 
 #### Ollama (Local)
 - **Models**: `llava:latest`, `llava:13b`, `llava:34b`
