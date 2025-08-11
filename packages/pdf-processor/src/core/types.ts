@@ -1,7 +1,7 @@
 /**
  * Vision LLM providers disponibles
  */
-export type VisionProvider = 'scaleway' | 'ollama';
+export type VisionProvider = 'scaleway' | 'ollama' | 'mistral';
 
 /**
  * Options pour extraction Vision LLM (style Sparrow)
@@ -57,7 +57,8 @@ export interface InternalProcessingOptions extends VisionExtractionOptions {
  */
 export const DEFAULT_MODELS: Record<VisionProvider, string> = {
   'scaleway': 'mistral-small-3.1-24b-instruct-2503',
-  'ollama': 'llava:13b'
+  'ollama': 'llava:13b',
+  'mistral': 'pixtral-large-latest'  // Mistral OCR model for vision tasks
 };
 
 /**
@@ -79,6 +80,7 @@ export interface PdfProcessorConfig {
   providers?: {
     scaleway?: ProviderConfig;
     ollama?: ProviderConfig;
+    mistral?: ProviderConfig;
   };
 }
 

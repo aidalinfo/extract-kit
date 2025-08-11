@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-Extract Kit is a production-ready PDF data extraction service powered by AI vision models. It converts PDFs into structured, validated data using TypeScript/Bun runtime with AI providers like Scaleway (Pixtral, Mistral) and Ollama LLaVA.
+Extract Kit is a production-ready PDF data extraction service powered by AI vision models. It converts PDFs into structured, validated data using TypeScript/Bun runtime with AI providers like Scaleway (Pixtral, Mistral), Mistral AI, and Ollama LLaVA.
 
 **Main Purpose**: Transform PDF documents (invoices, receipts, tables) into structured JSON data through AI-powered vision processing.
 
@@ -74,14 +74,16 @@ extract-kit/
 ## Development Notes
 
 ### Environment Setup
-1. **Required**: Set `EK_AI_API_KEY` in `.env` for Scaleway API access
+1. **Required**: Set API keys for your chosen provider:
+   - Scaleway: `EK_AI_API_KEY`
+   - Mistral AI: `MISTRAL_API_KEY`
 2. **Optional**: Configure `EK_AI_BASE_URL` for different AI providers
 3. **Performance**: Adjust worker counts via `EK_PDF_WORKERS` and `EK_VISION_WORKERS`
 
 ### Key Technologies
 - **Runtime**: Bun (fast JavaScript/TypeScript runtime)
 - **Framework**: Native Bun server with CORS support
-- **AI Providers**: Scaleway (cloud) or Ollama (local)
+- **AI Providers**: Scaleway (cloud), Mistral AI (cloud) or Ollama (local)
 - **Image Processing**: Sharp library for PDF to image conversion
 - **Validation**: Zod for type-safe schema validation
 - **Logging**: Pino for structured logging
@@ -171,6 +173,11 @@ const pdfProcessor: PdfProcessorConfig = {
       model: "mistral-small-3.1-24b-instruct-2503",
       apiKey: "your-scaleway-api-key",
       baseURL: "https://api.scaleway.ai/v1"
+    },
+    mistral: {
+      model: "pixtral-large-latest", // or "mistral-medium-latest"
+      apiKey: "your-mistral-api-key",
+      baseURL: "https://api.mistral.ai/v1" // optional
     }
   }
 };

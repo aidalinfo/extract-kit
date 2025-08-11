@@ -1,6 +1,7 @@
 import { generateObject } from 'ai';
 import { createOpenAI } from '@ai-sdk/openai';
 import { ollama, createOllama } from 'ollama-ai-provider';
+import { createMistral } from '@ai-sdk/mistral';
 import { z } from 'zod';
 import { createModuleLogger } from "../../utils/logger";
 import { DEFAULT_MODELS } from '../types';
@@ -109,6 +110,22 @@ export class AIGenerator {
         const scalewayClient = createOpenAI({ apiKey, baseURL });
         return scalewayClient(modelToUse);
       
+      case 'mistral':
+        const mistralApiKey = providerConfig?.apiKey || process.env.MISTRAL_API_KEY;
+        const mistralBaseURL = providerConfig?.baseURL;
+        
+        if (!mistralApiKey) {
+          throw new Error('Mistral API key requis: fournissez-le via pdfProcessor.providers.mistral.apiKey ou MISTRAL_API_KEY');
+        }
+        
+        const mistralConfig: any = { apiKey: mistralApiKey };
+        if (mistralBaseURL) {
+          mistralConfig.baseURL = mistralBaseURL;
+        }
+        
+        const mistralClient = createMistral(mistralConfig);
+        return mistralClient(modelToUse);
+      
       case 'ollama':
         const ollamaBaseURL = providerConfig?.baseURL;
         
@@ -122,7 +139,7 @@ export class AIGenerator {
         return ollama(modelToUse);
       
       default:
-        throw new Error(`Provider non supporté: ${provider}. Seuls 'scaleway' et 'ollama' sont supportés.`);
+        throw new Error(`Provider non supporté: ${provider}. Seuls 'scaleway', 'mistral' et 'ollama' sont supportés.`);
     }
   }
 
@@ -170,6 +187,15 @@ TASK: Perform comprehensive document data extraction.
    * Formate les images selon le provider
    */
   private formatImagesForProvider(images: ProcessedVisionImage[], provider: string): any[] {
+    // Mistral utilise un format différent pour les images
+    if (provider === 'mistral') {
+      return images.map(img => ({
+        type: 'image',
+        image: img.base64,
+      }));
+    }
+    
+    // Format standard pour Scaleway et Ollama
     return images.map(img => ({
       type: 'image',
       image: `data:image/jpeg;base64,${img.base64}`,
