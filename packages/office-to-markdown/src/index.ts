@@ -49,7 +49,41 @@ export {
 };
 
 /**
- * Main converter class that orchestrates different document converters
+ * Main converter class that orchestrates different document converters.
+ * 
+ * This class provides a high-level API for converting Office documents to Markdown.
+ * It handles file type detection, routing to appropriate converters, and provides
+ * both single-file and batch processing capabilities.
+ * 
+ * **Supported Formats:**
+ * - DOCX (Microsoft Word documents)
+ * - Future: PPTX, XLSX (planned)
+ * 
+ * **Key Features:**
+ * - Automatic file type detection
+ * - Configurable conversion options
+ * - Batch processing support
+ * - Error handling with graceful fallbacks
+ * - File information analysis
+ * 
+ * @example
+ * ```typescript
+ * const converter = new OfficeToMarkdown({
+ *   convertMath: true,
+ *   preserveTables: true,
+ *   headingStyle: 'atx'
+ * });
+ * 
+ * // Convert a single file
+ * const result = await converter.convert('./document.docx');
+ * console.log(result.markdown);
+ * 
+ * // Batch processing
+ * const results = await converter.convertMultiple([
+ *   './doc1.docx',
+ *   './doc2.docx'
+ * ]);
+ * ```
  */
 export class OfficeToMarkdown {
   private docxConverter: DocxConverter;
@@ -59,11 +93,41 @@ export class OfficeToMarkdown {
   }
 
   /**
-   * Convert a document to Markdown format
+   * Convert a document to Markdown format with automatic format detection.
    * 
-   * @param source - The source to convert (file path, buffer, etc.)
-   * @param options - Conversion options
-   * @returns Promise resolving to conversion result
+   * This is the main conversion method that:
+   * 1. **Source Processing**: Converts input to buffer and extracts metadata
+   * 2. **Format Detection**: Analyzes file signature, MIME type, and extension
+   * 3. **Validation**: Ensures the file type is supported
+   * 4. **Routing**: Delegates to the appropriate specialized converter
+   * 
+   * **Supported Input Types:**
+   * - File path (string)
+   * - Buffer, ArrayBuffer, Uint8Array
+   * - File-like objects with arrayBuffer() method
+   * - ReadableStream<Uint8Array>
+   * 
+   * @param source - The source to convert (various formats supported)
+   * @param options - Conversion options (math processing, table handling, etc.)
+   * @returns Promise resolving to DocumentConverterResult with markdown and metadata
+   * @throws UnsupportedFormatException for unsupported file types
+   * @throws FileConversionException for processing errors
+   * 
+   * @example
+   * ```typescript
+   * // From file path
+   * const result = await converter.convert('./document.docx');
+   * 
+   * // From buffer
+   * const buffer = await Bun.file('./document.docx').arrayBuffer();
+   * const result = await converter.convert(buffer);
+   * 
+   * // With options
+   * const result = await converter.convert('./document.docx', {
+   *   convertMath: true,
+   *   preserveTables: true
+   * });
+   * ```
    */
   async convert(
     source: ConvertibleSource,
@@ -96,11 +160,29 @@ export class OfficeToMarkdown {
   }
 
   /**
-   * Convert a DOCX file specifically
+   * Convert a DOCX file specifically without format detection.
    * 
-   * @param source - The DOCX source to convert
-   * @param options - Conversion options
-   * @returns Promise resolving to conversion result
+   * This method bypasses file type detection and directly uses the DOCX converter.
+   * Use this when you're certain the input is a DOCX file for better performance.
+   * 
+   * **Processing Pipeline:**
+   * 1. Source to buffer conversion
+   * 2. Metadata inference
+   * 3. Enhanced file info detection
+   * 4. Direct DOCX converter processing
+   * 
+   * @param source - The DOCX source to convert (same types as convert())
+   * @param options - Conversion options specific to DOCX processing
+   * @returns Promise resolving to DocumentConverterResult
+   * 
+   * @example
+   * ```typescript
+   * // When you know it's a DOCX file
+   * const result = await converter.convertDocx('./report.docx', {
+   *   styleMap: 'p[style-name="Heading 1"] => h1:fresh',
+   *   convertMath: true
+   * });
+   * ```
    */
   async convertDocx(
     source: ConvertibleSource,
@@ -114,11 +196,40 @@ export class OfficeToMarkdown {
   }
 
   /**
-   * Batch convert multiple documents
+   * Batch convert multiple documents with error resilience.
    * 
-   * @param sources - Array of sources to convert
-   * @param options - Conversion options
-   * @returns Promise resolving to array of conversion results
+   * Processes multiple documents sequentially, handling individual failures gracefully.
+   * Failed conversions are logged but don't prevent other files from being processed.
+   * The returned array maintains the same order and length as the input.
+   * 
+   * **Error Handling:**
+   * - Individual file failures result in placeholder results
+   * - Warnings are logged for failed conversions
+   * - Processing continues for remaining files
+   * - Final result array always matches input array length
+   * 
+   * @param sources - Array of sources to convert (mixed types supported)
+   * @param options - Conversion options applied to all files
+   * @returns Promise resolving to array of DocumentConverterResult (same length as input)
+   * 
+   * @example
+   * ```typescript
+   * const sources = [
+   *   './doc1.docx',
+   *   './doc2.docx',
+   *   await Bun.file('./doc3.docx').arrayBuffer()
+   * ];
+   * 
+   * const results = await converter.convertMultiple(sources, {
+   *   preserveTables: true
+   * });
+   * 
+   * results.forEach((result, index) => {
+   *   if (result.title !== 'Conversion failed') {
+   *     console.log(`Document ${index + 1}:`, result.title);
+   *   }
+   * });
+   * ```
    */
   async convertMultiple(
     sources: ConvertibleSource[],
@@ -143,10 +254,26 @@ export class OfficeToMarkdown {
   }
 
   /**
-   * Get information about a file without converting it
+   * Get detailed information about a file without converting it.
    * 
-   * @param source - The source to analyze
-   * @returns Promise resolving to file information
+   * Performs file analysis to extract metadata including:
+   * - File type detection (MIME type, extension)
+   * - Format support status
+   * - File size and structure information
+   * - Available converter capabilities
+   * 
+   * Useful for validation, UI display, or pre-conversion checks.
+   * 
+   * @param source - The source to analyze (any supported input type)
+   * @returns Promise resolving to detailed file information object
+   * 
+   * @example
+   * ```typescript
+   * const info = await converter.getFileInfo('./document.docx');
+   * console.log('File type:', info.mimetype);
+   * console.log('Supported:', info.supported);
+   * console.log('Size:', info.size);
+   * ```
    */
   async getFileInfo(source: ConvertibleSource): Promise<ReturnType<typeof getFileInfo>> {
     const buffer = await this.sourceToBuffer(source);
@@ -156,10 +283,22 @@ export class OfficeToMarkdown {
   }
 
   /**
-   * Check if a file type is supported
+   * Check if a file type is supported for conversion.
    * 
-   * @param source - The source to check
-   * @returns Promise resolving to boolean indicating support
+   * Quick validation method that determines if the given source can be processed
+   * by any of the available converters. Returns false for any errors during analysis.
+   * 
+   * @param source - The source to check (any supported input type)
+   * @returns Promise resolving to boolean (true if convertible, false otherwise)
+   * 
+   * @example
+   * ```typescript
+   * if (await converter.isSupported('./unknown.pdf')) {
+   *   const result = await converter.convert('./unknown.pdf');
+   * } else {
+   *   console.log('File type not supported');
+   * }
+   * ```
    */
   async isSupported(source: ConvertibleSource): Promise<boolean> {
     try {
@@ -171,7 +310,32 @@ export class OfficeToMarkdown {
   }
 
   /**
-   * Get list of supported file types
+   * Get comprehensive information about supported file types and converter capabilities.
+   * 
+   * Returns metadata about:
+   * - Supported file extensions
+   * - Recognized MIME types
+   * - Available converters and their features
+   * - Converter-specific capabilities
+   * 
+   * Useful for:
+   * - UI file picker configuration
+   * - Feature availability checks
+   * - Documentation generation
+   * - Validation logic
+   * 
+   * @returns Object containing supported formats and converter information
+   * 
+   * @example
+   * ```typescript
+   * const info = converter.getSupportedTypes();
+   * console.log('Extensions:', info.extensions); // ['.docx']
+   * console.log('MIME types:', info.mimeTypes);
+   * 
+   * info.converters.forEach(conv => {
+   *   console.log(`${conv.name}:`, conv.info.features);
+   * });
+   * ```
    */
   getSupportedTypes(): {
     extensions: string[];
@@ -285,17 +449,47 @@ export class OfficeToMarkdown {
   }
 }
 
-/**
- * Convenience functions for quick conversions
- */
+// =============================================================================
+// Convenience Functions
+// =============================================================================
 
 /**
- * Convert a DOCX file to Markdown (simple API)
+ * Convert a DOCX file to Markdown using the simple API.
  * 
- * @param filePath - Path to the DOCX file
- * @param options - Conversion options
- * @returns Promise resolving to Markdown string
+ * This is a convenience function that creates a converter instance and returns
+ * just the markdown content (not the full result object). Perfect for simple
+ * use cases where you just need the converted text.
+ * 
+ * **Use this when:**
+ * - You just need the Markdown text
+ * - You don't need metadata like title or conversion info
+ * - You want a simple one-line conversion
+ * 
+ * **Use OfficeToMarkdown class when:**
+ * - You need metadata (title, conversion info)
+ * - You're doing multiple conversions
+ * - You need batch processing
+ * - You want to reuse converter configuration
+ * 
+ * @param filePath - Path to the DOCX file on filesystem
+ * @param options - Optional conversion options
+ * @returns Promise resolving to Markdown string content
+ * @throws Same exceptions as OfficeToMarkdown.convertDocx()
+ * 
+ * @example
+ * ```typescript
+ * // Simple conversion
+ * const markdown = await docxToMarkdown('./report.docx');
+ * console.log(markdown);
+ * 
+ * // With options
+ * const markdown = await docxToMarkdown('./math-heavy.docx', {
+ *   convertMath: true,
+ *   preserveTables: true
+ * });
+ * ```
  */
+
 export async function docxToMarkdown(
   filePath: string,
   options: ConverterOptions = {}
@@ -306,12 +500,39 @@ export async function docxToMarkdown(
 }
 
 /**
- * Convert any supported office document to Markdown
+ * Convert any supported office document to Markdown using the simple API.
  * 
- * @param source - The source to convert
- * @param options - Conversion options
- * @returns Promise resolving to Markdown string
+ * This convenience function handles any supported input type with automatic
+ * format detection. Like docxToMarkdown(), it returns only the Markdown content
+ * without metadata.
+ * 
+ * **Input Types Supported:**
+ * - File paths (string)
+ * - Binary data (Buffer, ArrayBuffer, Uint8Array)
+ * - File-like objects
+ * - Readable streams
+ * 
+ * @param source - The source to convert (any supported type)
+ * @param options - Optional conversion options
+ * @returns Promise resolving to Markdown string content
+ * @throws Same exceptions as OfficeToMarkdown.convert()
+ * 
+ * @example
+ * ```typescript
+ * // From file path
+ * const markdown = await officeToMarkdown('./document.docx');
+ * 
+ * // From buffer
+ * const buffer = await fetch('http://example.com/doc.docx')
+ *   .then(r => r.arrayBuffer());
+ * const markdown = await officeToMarkdown(buffer);
+ * 
+ * // From Bun file
+ * const file = Bun.file('./document.docx');
+ * const markdown = await officeToMarkdown(file);
+ * ```
  */
+
 export async function officeToMarkdown(
   source: ConvertibleSource,
   options: ConverterOptions = {}
@@ -322,6 +543,36 @@ export async function officeToMarkdown(
 }
 
 /**
- * Default converter instance for quick usage
+ * Default converter instance with standard configuration.
+ * 
+ * Pre-configured OfficeToMarkdown instance that can be used immediately
+ * without creating your own instance. Uses default options:
+ * - Math conversion enabled
+ * - Table preservation enabled
+ * - ATX heading style
+ * - Standard error handling
+ * 
+ * **When to use:**
+ * - You don't need custom configuration
+ * - You want to avoid creating converter instances
+ * - You're doing simple conversions with default behavior
+ * 
+ * **When to create your own:**
+ * - You need custom options (heading style, math processing, etc.)
+ * - You're doing many conversions (better to reuse configured instance)
+ * - You need different settings for different files
+ * 
+ * @example
+ * ```typescript
+ * // Quick conversion with defaults
+ * const result = await defaultConverter.convert('./document.docx');
+ * 
+ * // Check if file is supported
+ * const supported = await defaultConverter.isSupported('./unknown.pdf');
+ * 
+ * // Get file information
+ * const info = await defaultConverter.getFileInfo('./document.docx');
+ * ```
  */
+
 export const defaultConverter = new OfficeToMarkdown();

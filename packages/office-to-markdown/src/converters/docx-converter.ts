@@ -26,12 +26,27 @@ const ACCEPTED_FILE_EXTENSIONS = [".docx"];
 
 /**
  * Converter for DOCX files to Markdown.
- * Converts DOCX → HTML → Markdown with support for:
- * - Tables
- * - Math equations (OMML to LaTeX)
- * - Headings and formatting
- * - Images (with alt text)
- * - Lists and other structural elements
+ * 
+ * This converter implements a three-stage pipeline:
+ * 1. **Preprocessing**: Extracts and modifies DOCX content to convert OMML math to LaTeX
+ * 2. **DOCX to HTML**: Uses mammoth.js to convert the preprocessed DOCX to HTML
+ * 3. **HTML to Markdown**: Uses custom Turndown rules to convert HTML to Markdown
+ * 
+ * **Supported Features:**
+ * - Tables with proper formatting
+ * - Math equations (OMML to LaTeX conversion)
+ * - Headings and text formatting (bold, italic)
+ * - Images with alt text
+ * - Lists (ordered and unordered)
+ * - Custom style mapping
+ * - Batch processing
+ * 
+ * @example
+ * ```typescript
+ * const converter = new DocxConverter({ convertMath: true });
+ * const result = await converter.convertFile('./document.docx');
+ * console.log(result.markdown);
+ * ```
  */
 export class DocxConverter extends DocumentConverter {
   private htmlConverter: CustomHtmlToMarkdown;
@@ -42,7 +57,16 @@ export class DocxConverter extends DocumentConverter {
   }
 
   /**
-   * Check if this converter can handle the given file
+   * Check if this converter can handle the given file.
+   * 
+   * Performs multiple checks to determine if a file is a DOCX document:
+   * 1. File extension matching (.docx)
+   * 2. MIME type matching (application/vnd.openxmlformats-officedocument.wordprocessingml.document)
+   * 3. Magic bytes detection (ZIP signature + DOCX structure)
+   * 
+   * @param buffer - The file content as a Buffer
+   * @param streamInfo - File metadata including extension and MIME type
+   * @returns True if this converter can process the file
    */
   accepts(buffer: Buffer, streamInfo: StreamInfo): boolean {
     const mimetype = (streamInfo.mimetype || "").toLowerCase();
@@ -78,7 +102,30 @@ export class DocxConverter extends DocumentConverter {
   }
 
   /**
-   * Convert DOCX file to Markdown
+   * Convert DOCX file to Markdown using the three-stage pipeline.
+   * 
+   * **Stage 1: Preprocessing**
+   * - Extracts DOCX as ZIP archive
+   * - Locates math equations in OMML format
+   * - Converts OMML to LaTeX using regex patterns
+   * - Reconstructs DOCX with LaTeX equations
+   * 
+   * **Stage 2: DOCX to HTML**
+   * - Uses mammoth.js to convert DOCX to HTML
+   * - Applies custom style mapping if provided
+   * - Handles conversion warnings and errors
+   * 
+   * **Stage 3: HTML to Markdown**
+   * - Uses custom Turndown converter with enhanced rules
+   * - Preserves table structure and formatting
+   * - Maintains math equations in LaTeX format
+   * 
+   * @param buffer - The DOCX file content as a Buffer
+   * @param streamInfo - File metadata (filename, extension, MIME type)
+   * @param options - Conversion options (math processing, style mapping, etc.)
+   * @returns Promise resolving to DocumentConverterResult with markdown and title
+   * @throws OfficeToMarkdownError for conversion failures
+   * @throws MissingDependencyException if mammoth is not installed
    */
   async convert(
     buffer: Buffer,
@@ -198,7 +245,26 @@ export class DocxConverter extends DocumentConverter {
   }
 
   /**
-   * Convert DOCX file from file path (convenience method)
+   * Convert DOCX file from file path (convenience method).
+   * 
+   * This is a high-level wrapper that:
+   * 1. Reads the file from the filesystem
+   * 2. Infers file metadata from the path
+   * 3. Calls the main convert() method
+   * 
+   * @param filePath - Path to the DOCX file on filesystem
+   * @param options - Conversion options
+   * @returns Promise resolving to DocumentConverterResult
+   * @throws FileConversionException if file cannot be read or converted
+   * 
+   * @example
+   * ```typescript
+   * const converter = new DocxConverter();
+   * const result = await converter.convertFile('./report.docx', {
+   *   convertMath: true,
+   *   preserveTables: true
+   * });
+   * ```
    */
   async convertFile(filePath: string, options: ConverterOptions = {}): Promise<DocumentConverterResult> {
     try {
@@ -215,7 +281,24 @@ export class DocxConverter extends DocumentConverter {
   }
 
   /**
-   * Convert DOCX from multiple sources (batch processing)
+   * Convert DOCX files from multiple sources (batch processing).
+   * 
+   * Processes multiple DOCX files concurrently while handling individual failures gracefully.
+   * Failed conversions are logged but don't stop the processing of other files.
+   * 
+   * @param sources - Array of source objects containing buffer and stream info
+   * @param options - Conversion options applied to all files
+   * @returns Promise resolving to array of DocumentConverterResult (same length as input)
+   * @note Failed conversions result in placeholder results with empty content
+   * 
+   * @example
+   * ```typescript
+   * const sources = [
+   *   { buffer: await Bun.file('doc1.docx').arrayBuffer(), streamInfo: { filename: 'doc1.docx', extension: '.docx' }},
+   *   { buffer: await Bun.file('doc2.docx').arrayBuffer(), streamInfo: { filename: 'doc2.docx', extension: '.docx' }}
+   * ];
+   * const results = await converter.convertMultiple(sources);
+   * ```
    */
   async convertMultiple(
     sources: Array<{ buffer: Buffer; streamInfo: StreamInfo }>,
@@ -225,7 +308,10 @@ export class DocxConverter extends DocumentConverter {
     const errors: Array<{ index: number; error: Error }> = [];
 
     for (let i = 0; i < sources.length; i++) {
-      const { buffer, streamInfo } = sources[i];
+      const source = sources[i];
+      if (!source) continue;
+      
+      const { buffer, streamInfo } = source;
       try {
         const result = await this.convert(buffer, streamInfo, options);
         results.push(result);
@@ -247,7 +333,16 @@ export class DocxConverter extends DocumentConverter {
   }
 
   /**
-   * Get conversion statistics and information
+   * Get converter capabilities and supported formats information.
+   * 
+   * @returns Object containing supported file types and feature list
+   * 
+   * @example
+   * ```typescript
+   * const info = converter.getConversionInfo();
+   * console.log('Supported extensions:', info.supportedExtensions);
+   * console.log('Features:', info.features);
+   * ```
    */
   getConversionInfo(): {
     supportedExtensions: string[];
