@@ -42,27 +42,6 @@ extract-kit/
 
 ## 🚀 Quick Start
 
-### Using Docker (Recommended)
-
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd extract-kit
-   ```
-
-2. **Set up environment**
-   ```bash
-   cp example.env.development .env
-   # Edit .env with your API keys
-   ```
-
-3. **Start with Docker Compose**
-   ```bash
-   docker-compose -f docker-compose-dev.yml up
-   ```
-
-   Your API is now running at `http://localhost:3000` 🎉
-
 ### Manual Installation
 
 1. **Install Bun** (if not already installed)
