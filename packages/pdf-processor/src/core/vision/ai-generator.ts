@@ -1,7 +1,6 @@
 import { generateObject } from 'ai';
 import { createOpenAI } from '@ai-sdk/openai';
 import { ollama, createOllama } from 'ollama-ai-provider';
-import { createMistral } from '@ai-sdk/mistral';
 import { z } from 'zod';
 import { createModuleLogger } from "../../utils/logger";
 import { DEFAULT_MODELS } from '../types';
@@ -51,7 +50,7 @@ export class AIGenerator {
     
     try {
       const result = await generateObject({
-        model,
+        model: model as any,
         schema,
         messages: [
           {
@@ -73,6 +72,7 @@ export class AIGenerator {
       
       return { ...result, modelUsed: modelName };
     } catch (error: any) {
+      console.log('❌ Erreur lors de la génération AI', error);
       logger.error({
         error: error.message || error.toString(),
         stack: error.stack,
@@ -108,23 +108,23 @@ export class AIGenerator {
         }
         
         const scalewayClient = createOpenAI({ apiKey, baseURL });
-        return scalewayClient(modelToUse);
+        return scalewayClient.chat(modelToUse); // Force l'utilisation de Chat Completions API
       
       case 'mistral':
-        const mistralApiKey = providerConfig?.apiKey || process.env.MISTRAL_API_KEY;
+        const mistralApiKey = providerConfig?.apiKey || process.env.EK_MISTRAL_API_KEY;
         const mistralBaseURL = providerConfig?.baseURL;
         
         if (!mistralApiKey) {
           throw new Error('Mistral API key requis: fournissez-le via pdfProcessor.providers.mistral.apiKey ou MISTRAL_API_KEY');
         }
         
-        const mistralConfig: any = { apiKey: mistralApiKey };
+        const mistralConfig: any = { apiKey: mistralApiKey, baseURL: 'https://api.mistral.ai/v1' };
         if (mistralBaseURL) {
           mistralConfig.baseURL = mistralBaseURL;
         }
         
-        const mistralClient = createMistral(mistralConfig);
-        return mistralClient(modelToUse);
+        const mistralClient = createOpenAI(mistralConfig);
+        return mistralClient.chat(modelToUse);
       
       case 'ollama':
         const ollamaBaseURL = providerConfig?.baseURL;
@@ -138,8 +138,23 @@ export class AIGenerator {
         
         return ollama(modelToUse);
       
+      case 'custom':
+        const customApiKey = providerConfig?.apiKey || process.env.CUSTOM_API_KEY;
+        const customBaseURL = providerConfig?.baseURL;
+        
+        if (!customApiKey) {
+          throw new Error('Custom API key requis: fournissez-le via pdfProcessor.providers.custom.apiKey ou CUSTOM_API_KEY');
+        }
+        
+        if (!customBaseURL) {
+          throw new Error('Custom baseURL requis: fournissez-le via pdfProcessor.providers.custom.baseURL');
+        }
+        
+        const customClient = createOpenAI({ apiKey: customApiKey, baseURL: customBaseURL });
+        return customClient.chat(modelToUse); // Force l'utilisation de Chat Completions API
+      
       default:
-        throw new Error(`Provider non supporté: ${provider}. Seuls 'scaleway', 'mistral' et 'ollama' sont supportés.`);
+        throw new Error(`Provider non supporté: ${provider}. Seuls 'scaleway', 'mistral', 'ollama' et 'custom' sont supportés.`);
     }
   }
 
@@ -187,15 +202,6 @@ TASK: Perform comprehensive document data extraction.
    * Formate les images selon le provider
    */
   private formatImagesForProvider(images: ProcessedVisionImage[], provider: string): any[] {
-    // Mistral utilise un format différent pour les images
-    if (provider === 'mistral') {
-      return images.map(img => ({
-        type: 'image',
-        image: img.base64,
-      }));
-    }
-    
-    // Format standard pour Scaleway et Ollama
     return images.map(img => ({
       type: 'image',
       image: `data:image/jpeg;base64,${img.base64}`,

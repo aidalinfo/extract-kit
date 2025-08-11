@@ -18,13 +18,14 @@ import {
   type BasicReceipt
 } from "../core/schemas";
 import type { VisionExtractionOptions, PdfProcessorConfig, ProviderConfig } from "../core/types";
+import { DEFAULT_MODELS } from "../core/types";
 
 /**
  * Options d'extraction pour l'API publique
  */
 export interface ExtractOptions extends Omit<VisionExtractionOptions, 'provider'> {
   /** Provider d'IA à utiliser */
-  provider?: 'scaleway' | 'ollama';
+  provider?: 'scaleway' | 'ollama' | 'mistral';
   /** Modèle spécifique (optionnel) */
   model?: string;
   /** Schema JSON personnalisé ou type de document */
@@ -210,12 +211,23 @@ export const providers = {
   scaleway: {
     name: 'Scaleway AI',
     models: ['mistral-small-3.1-24b-instruct-2503'],
-    defaultModel: 'mistral-small-3.1-24b-instruct-2503'
+    defaultModel: DEFAULT_MODELS.scaleway
   },
   ollama: {
     name: 'Ollama Local',
     models: ['llava:latest', 'llava:13b', 'llava:34b'],
-    defaultModel: 'llava:latest'
+    defaultModel: DEFAULT_MODELS.ollama
+  },
+  //https://docs.mistral.ai/capabilities/vision/
+  mistral: {
+    name: 'Mistral AI',
+    models: ['pixtral-12b-latest', 'pixtral-large-latest','mistral-medium-latest','mistral-small-latest'],
+    defaultModel: DEFAULT_MODELS.mistral
+  },
+  custom: {
+    name: 'Custom OpenAI-Compatible API',
+    models: [],
+    defaultModel: DEFAULT_MODELS.custom
   }
 } as const;
 

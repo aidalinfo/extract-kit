@@ -64,8 +64,8 @@
   },
   "dependencies": {
     "@ai-sdk/mistral": "^2.0.2",
-    "@ai-sdk/openai": "^1.0.0",
-    "ai": "^4.1.0",
+    "@ai-sdk/openai": "2.0.9",
+    "ai": "^5.0.9",
     "ghostscript-node": "^1.5.0",
     "ollama-ai-provider": "^1.2.0",
     "pino": "^9.8.0",

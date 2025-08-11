@@ -1,6 +1,7 @@
 import fs from "fs/promises";
 import path from "path";
 import { createModuleLogger } from "../../utils/logger";
+import { DEFAULT_MODELS } from "../types";
 import type { AIVisionProcessingOptions } from './processor';
 
 const logger = createModuleLogger('image-optimization');
@@ -114,7 +115,7 @@ export class ImageOptimizer {
       }
 
       // Redimensionnement pour Vision LLM (selon le nombre max de pixels)
-      const { maxPixels, maxDimension } = this.getMaxResolutionForProvider(options.provider);
+      const { maxPixels, maxDimension } = this.getMaxResolutionForProvider(options.provider, options.model);
       const currentPixels = (metadata.width || 0) * (metadata.height || 0);
       
       if (currentPixels > maxPixels || (metadata.width && metadata.width > maxDimension) || (metadata.height && metadata.height > maxDimension)) {
@@ -196,15 +197,19 @@ export class ImageOptimizer {
   }
 
   /**
-   * Détermine les limites de résolution selon le provider
+   * Détermine les limites de résolution selon le modèle
    */
-  private getMaxResolutionForProvider(provider: string): { maxPixels: number, maxDimension: number } {
-    if (provider.toLowerCase().includes('pixtral')) {
+  private getMaxResolutionForProvider(provider: string, model?: string): { maxPixels: number, maxDimension: number } {
+    // Déterminer le modèle utilisé
+    const modelName = model || DEFAULT_MODELS[provider as keyof typeof DEFAULT_MODELS] || '';
+    
+    // Limites selon le modèle spécifique
+    if (modelName.toLowerCase().includes('pixtral')) {
       return { 
         maxPixels: 1024 * 1024, // 1,048,576 pixels max
         maxDimension: 1024      // 1024px max par dimension
       };
-    } else if (provider.toLowerCase().includes('mistral')) {
+    } else if (modelName.toLowerCase().includes('mistral')) {
       return { 
         maxPixels: 1540 * 1540, // 2,371,600 pixels max  
         maxDimension: 1540      // 1540px max par dimension
