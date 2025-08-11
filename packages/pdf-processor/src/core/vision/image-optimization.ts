@@ -1,7 +1,7 @@
 import fs from "fs/promises";
 import path from "path";
 import { createModuleLogger } from "../../utils/logger";
-import { AIVisionProcessingOptions } from './processor';
+import type { AIVisionProcessingOptions } from './processor';
 
 const logger = createModuleLogger('image-optimization');
 
@@ -113,16 +113,36 @@ export class ImageOptimizer {
         }
       }
 
-      // Redimensionnement pour Vision LLM
-      if (metadata.width && metadata.width > 2048) {
-        const scaleFactor = 2048 / metadata.width;
-        const newHeight = Math.round((metadata.height || 0) * scaleFactor);
+      // Redimensionnement pour Vision LLM (selon le nombre max de pixels)
+      const { maxPixels, maxDimension } = this.getMaxResolutionForProvider(options.provider);
+      const currentPixels = (metadata.width || 0) * (metadata.height || 0);
+      
+      if (currentPixels > maxPixels || (metadata.width && metadata.width > maxDimension) || (metadata.height && metadata.height > maxDimension)) {
+        // Calculer les nouvelles dimensions en gardant le ratio d'aspect
+        const aspectRatio = (metadata.width || 1) / (metadata.height || 1);
         
-        pipeline = pipeline.resize(2048, newHeight, {
+        // Méthode 1: Limiter par pixels totaux (optimal pour tokens)
+        let newWidth = Math.sqrt(maxPixels * aspectRatio);
+        let newHeight = Math.sqrt(maxPixels / aspectRatio);
+        
+        // Méthode 2: Vérifier les limites de dimension max
+        if (newWidth > maxDimension) {
+          newWidth = maxDimension;
+          newHeight = newWidth / aspectRatio;
+        }
+        if (newHeight > maxDimension) {
+          newHeight = maxDimension;
+          newWidth = newHeight * aspectRatio;
+        }
+        
+        newWidth = Math.round(newWidth);
+        newHeight = Math.round(newHeight);
+        
+        pipeline = pipeline.resize(newWidth, newHeight, {
           kernel: sharp.kernel.lanczos3,
           withoutEnlargement: true
         });
-        optimizations.push(`resize-2048x${newHeight}`);
+        optimizations.push(`resize-${newWidth}x${newHeight}-pixels`);
       }
 
       // Amélioration contraste
@@ -173,5 +193,28 @@ export class ImageOptimizer {
     } catch (error) {
       logger.warn({ error, tempDir }, '⚠️ Erreur nettoyage répertoire temporaire');
     }
+  }
+
+  /**
+   * Détermine les limites de résolution selon le provider
+   */
+  private getMaxResolutionForProvider(provider: string): { maxPixels: number, maxDimension: number } {
+    if (provider.toLowerCase().includes('pixtral')) {
+      return { 
+        maxPixels: 1024 * 1024, // 1,048,576 pixels max
+        maxDimension: 1024      // 1024px max par dimension
+      };
+    } else if (provider.toLowerCase().includes('mistral')) {
+      return { 
+        maxPixels: 1540 * 1540, // 2,371,600 pixels max  
+        maxDimension: 1540      // 1540px max par dimension
+      };
+    }
+    
+    // Par défaut, utiliser 2048 pour les autres modèles
+    return { 
+      maxPixels: 2048 * 2048, // 4,194,304 pixels max
+      maxDimension: 2048      // 2048px max par dimension
+    };
   }
 }
