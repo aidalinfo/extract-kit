@@ -5,37 +5,37 @@ import { z } from 'zod';
  */
 
 export const AddressSchema = z.object({
-  street: z.string().nullable(),
-  city: z.string().nullable(),
-  postal_code: z.string().nullable(),
-  country: z.string().nullable(),
+  street: z.string().nullable().optional(),
+  city: z.string().nullable().optional(),
+  postal_code: z.string().nullable().optional(),
+  country: z.string().nullable().optional(),
 });
 
 export const ContactInfoSchema = z.object({
-  name: z.string().nullable(),
-  company_name: z.string().nullable(),
-  address: AddressSchema.nullable(),
-  phone: z.string().nullable(),
-  email: z.string().email().nullable().or(z.literal(null)),
-  website: z.string().nullable(),
-  vat_number: z.string().nullable(),
-  tax_id: z.string().nullable(),
+  name: z.string().nullable().optional(),
+  company_name: z.string().nullable().optional(),
+  address: AddressSchema.nullable().optional(),
+  phone: z.string().nullable().optional(),
+  email: z.string().email().nullable().or(z.literal(null)).optional(),
+  website: z.string().nullable().optional(),
+  vat_number: z.string().nullable().optional(),
+  tax_id: z.string().nullable().optional(),
 });
 
 export const DocumentInfoSchema = z.object({
-  document_type: z.string().nullable(),
-  language: z.string().nullable(),
-  currency: z.string().nullable(),
-  total_pages: z.number().int().nullable(),
+  document_type: z.string().nullable().optional(),
+  language: z.string().nullable().optional(),
+  currency: z.string().nullable().optional(),
+  total_pages: z.number().int().nullable().optional(),
 });
 
 export const PaymentInfoSchema = z.object({
-  payment_terms: z.string().nullable(),
-  payment_method: z.string().nullable(),
-  payment_due_date: z.string().nullable(),
-  bank_details: z.string().nullable(),
-  iban: z.string().nullable(),
-  swift_code: z.string().nullable(),
+  payment_terms: z.string().nullable().optional(),
+  payment_method: z.string().nullable().optional(),
+  payment_due_date: z.string().nullable().optional(),
+  bank_details: z.string().nullable().optional(),
+  iban: z.string().nullable().optional(),
+  swift_code: z.string().nullable().optional(),
 });
 
 // Types TypeScript générés
