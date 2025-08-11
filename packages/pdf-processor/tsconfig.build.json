@@ -4,6 +4,10 @@
     "lib": ["ESNext"],
     "module": "ESNext", 
     "moduleResolution": "node",
+    "baseUrl": ".",
+    "paths": {
+      "ai": ["src/types/ai-shim.d.ts"]
+    },
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "declaration": true,
