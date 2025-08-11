@@ -5,7 +5,7 @@ import {
   TablesOnlySchema, 
   SchemaFactory 
 } from "../schemas";
-import { AIVisionProcessingOptions } from './processor';
+import type { AIVisionProcessingOptions } from './processor';
 
 const logger = createModuleLogger('schema-selector');
 

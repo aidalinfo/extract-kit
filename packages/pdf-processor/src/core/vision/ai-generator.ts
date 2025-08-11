@@ -51,7 +51,7 @@ export class AIGenerator {
     
     try {
       const result = await generateObject({
-        model,
+        model: model as any,
         schema,
         messages: [
           {
@@ -108,7 +108,7 @@ export class AIGenerator {
         }
         
         const scalewayClient = createOpenAI({ apiKey, baseURL });
-        return scalewayClient(modelToUse);
+        return scalewayClient.chat(modelToUse); // Force l'utilisation de Chat Completions API
       
       case 'mistral':
         const mistralApiKey = providerConfig?.apiKey || process.env.MISTRAL_API_KEY;

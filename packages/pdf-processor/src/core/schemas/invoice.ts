@@ -48,9 +48,9 @@ export const FinancialTotalsSchema = z.object({
 export const InvoiceDetailsSchema = z.object({
   invoice_number: z.string().nullable(),
   invoice_date: z.string().nullable(),
-  due_date: z.string().nullable(),
-  purchase_order: z.string().nullable(),
-  reference_number: z.string().nullable(),
+  due_date: z.string().nullable().optional(),
+  purchase_order: z.string().nullable().optional(),
+  reference_number: z.string().nullable().optional(),
 });
 
 // === SCHÉMA FACTURE COMPLET ===

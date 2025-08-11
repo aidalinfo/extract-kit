@@ -130,6 +130,17 @@ export class AIVisionProcessor {
         };
       }
       
+      logger.error({
+        error: error.message || error.toString(),
+        stack: error.stack,
+        name: error.name,
+        status: error.status,
+        statusText: error.statusText,
+        url: error.url,
+        response: error.response,
+        cause: error.cause
+      }, '❌ AI Vision processing failed - Détails complets');
+      
       throw new Error(`AI Vision processing failed: ${error.message}`);
     }
   }
