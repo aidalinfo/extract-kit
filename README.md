@@ -15,6 +15,7 @@ This repository contains the following open-source packages:
 ### 1. PDF Processor
 
 [![npm version](https://badge.fury.io/js/%40aidalinfo%2Fpdf-processor.svg)](https://www.npmjs.com/package/@aidalinfo/pdf-processor)
+[![npm downloads](https://img.shields.io/npm/dm/@aidalinfo/pdf-processor.svg?style=flat-square)](https://www.npmjs.com/package/@aidalinfo/pdf-processor)
 
 A service that leverages cutting-edge AI vision models (Scaleway, Mistral, Ollama) to intelligently extract structured data from PDF documents. It's perfect for processing invoices, receipts, tables, or any custom document type.
 
