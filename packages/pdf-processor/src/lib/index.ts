@@ -218,10 +218,16 @@ export const providers = {
     models: ['llava:latest', 'llava:13b', 'llava:34b'],
     defaultModel: DEFAULT_MODELS.ollama
   },
+  //https://docs.mistral.ai/capabilities/vision/
   mistral: {
     name: 'Mistral AI',
-    models: ['mistral-ocr-2505'],
+    models: ['pixtral-12b-latest', 'pixtral-large-latest','mistral-medium-latest','mistral-small-latest'],
     defaultModel: DEFAULT_MODELS.mistral
+  },
+  custom: {
+    name: 'Custom OpenAI-Compatible API',
+    models: [],
+    defaultModel: DEFAULT_MODELS.custom
   }
 } as const;
 
