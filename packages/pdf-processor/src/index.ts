@@ -26,7 +26,8 @@ export {
   type ComprehensiveInvoice,
   type TablesOnly,
   type BasicReceipt,
-  type VisionExtractionOptions
+  type VisionExtractionOptions,
+  type PdfProcessorConfig
 } from './lib';
 
 // === EXPORTS CORE (pour usage avancé) ===

@@ -1,6 +1,6 @@
 {
   "name": "@aidalinfo/pdf-processor",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Powerful PDF data extraction library powered by AI vision models. Transform PDFs into structured, validated data using TypeScript, Zod, and AI providers like Scaleway and Ollama.",
   "main": "dist/index.js",
   "module": "dist/index.js",
