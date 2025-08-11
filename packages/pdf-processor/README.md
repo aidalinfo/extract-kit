@@ -10,7 +10,7 @@ Extract Kit is a production-ready TypeScript/Bun-based service that leverages cu
 
 ## ✨ Key Features
 
-- **🤖 AI-Powered Extraction**: Harness the power of Scaleway Pixtral and Ollama LLaVA vision models
+- **🤖 AI-Powered Extraction**: Harness the power of Scaleway Pixtral, Mistral AI, Ollama LLaVA, and custom providers
 - **📄 Smart PDF Processing**: Automatic PDF to optimized image conversion using Sharp
 - **⚡ Lightning Fast**: Built on Bun runtime with parallel worker processing for maximum performance
 - **🔒 Type-Safe**: Full TypeScript implementation with Zod schema validation
@@ -56,7 +56,7 @@ extract-kit/
 3. **Configure environment**
    ```bash
    cp ../../example.env.development .env
-   # Add your Scaleway API key or Ollama configuration
+   # Add your Scaleway, Mistral AI, or custom provider API keys
    ```
 
 4. **Start the server**
@@ -69,24 +69,46 @@ extract-kit/
 ### Extract Invoice Data
 
 ```bash
+# Using Scaleway
 curl -X POST http://localhost:3000/api/v1/vision/invoice \
   -F "file=@invoice.pdf" \
   -F "provider=scaleway"
+
+# Using Mistral AI
+curl -X POST http://localhost:3000/api/v1/vision/invoice \
+  -F "file=@invoice.pdf" \
+  -F "provider=mistral" \
+  -F "model=pixtral-large-latest"
 ```
 
 ### Extract Tables
 
 ```bash
+# Default provider
 curl -X POST http://localhost:3000/api/v1/vision/tables \
   -F "file=@report.pdf"
+
+# Using Mistral AI
+curl -X POST http://localhost:3000/api/v1/vision/tables \
+  -F "file=@report.pdf" \
+  -F "provider=mistral"
 ```
 
 ### Custom Extraction
 
 ```bash
+# Using Scaleway
 curl -X POST http://localhost:3000/api/v1/vision/extract \
   -F "file=@document.pdf" \
   -F "provider=scaleway" \
+  -F "documentType=custom" \
+  -F "query=Extract all product information"
+
+# Using Custom Provider
+curl -X POST http://localhost:3000/api/v1/vision/extract \
+  -F "file=@document.pdf" \
+  -F "provider=custom" \
+  -F "model=your-model-name" \
   -F "documentType=custom" \
   -F "query=Extract all product information"
 ```
@@ -167,6 +189,16 @@ const pdfProcessor: PdfProcessorConfig = {
     ollama: {
       model: "llava:13b",
       baseURL: "http://localhost:11434" // optional, defaults to localhost
+    },
+    mistral: {
+      model: "pixtral-large-latest", // Best for OCR/vision
+      apiKey: "your-mistral-api-key",
+      baseURL: "https://api.mistral.ai/v1" // optional
+    },
+    custom: {
+      model: "your-model-name",
+      apiKey: "your-api-key",
+      baseURL: "https://your-api-endpoint.com/v1" // required
     }
   }
 };
@@ -268,6 +300,8 @@ import type {
 # AI Provider Configuration
 EK_AI_API_KEY=your-scaleway-api-key
 EK_AI_BASE_URL=https://api.scaleway.ai/v1
+MISTRAL_API_KEY=your-mistral-api-key  # For Mistral AI
+CUSTOM_API_KEY=your-custom-api-key    # For custom providers
 
 # Server Configuration
 PORT=3000
@@ -287,9 +321,21 @@ EK_TMPDIR=/tmp
 - **Models**: `pixtral-12b-2409`, `mistral-small-3.1-24b-instruct-2503`
 - **Best for**: Production deployments, high accuracy
 
+#### Mistral AI (Cloud)
+- **Models**: 
+  - `pixtral-large-latest` - Best for OCR and vision tasks
+  - `mistral-medium-latest` - Alternative model for text extraction
+- **Best for**: High-quality OCR, document understanding, complex layouts
+- **Note**: Requires MISTRAL_API_KEY or configuration object
+
 #### Ollama (Local)
 - **Models**: `llava:latest`, `llava:13b`, `llava:34b`
 - **Best for**: Privacy-sensitive data, offline processing
+
+#### Custom Provider (Self-hosted/Proprietary)
+- **Models**: Any OpenAI-compatible vision model
+- **Best for**: Enterprise deployments, proprietary AI services, custom models
+- **Requirements**: API key and base URL configuration
 
 ## 📊 Extraction Capabilities
 
