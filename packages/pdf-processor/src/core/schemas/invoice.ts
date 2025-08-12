@@ -90,7 +90,7 @@ export const ComprehensiveInvoiceSchema = z.object({
       // Totaux finaux
       total: FinancialTotalsSchema.optional(),
       reference: z.string().optional(),
-      exercice: z.string().optional(),
+      exercice: z.string().nullable().optional(),
       montant_ttc: z.number().nullable().optional(),
       currency: z.string().nullable().optional(),
       
