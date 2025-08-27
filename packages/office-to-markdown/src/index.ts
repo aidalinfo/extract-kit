@@ -471,16 +471,20 @@ export class OfficeToMarkdown {
  * - You need batch processing
  * - You want to reuse converter configuration
  * 
- * @param filePath - Path to the DOCX file on filesystem
+ * @param source - DOCX source (file path, Buffer, ArrayBuffer, Uint8Array, FileSource, or ReadableStream)
  * @param options - Optional conversion options
  * @returns Promise resolving to Markdown string content
  * @throws Same exceptions as OfficeToMarkdown.convertDocx()
  * 
  * @example
  * ```typescript
- * // Simple conversion
+ * // From file path
  * const markdown = await docxToMarkdown('./report.docx');
  * console.log(markdown);
+ * 
+ * // From buffer
+ * const buffer = await Bun.file('./report.docx').arrayBuffer();
+ * const markdown = await docxToMarkdown(Buffer.from(buffer));
  * 
  * // With options
  * const markdown = await docxToMarkdown('./math-heavy.docx', {
@@ -491,11 +495,11 @@ export class OfficeToMarkdown {
  */
 
 export async function docxToMarkdown(
-  filePath: string,
+  source: ConvertibleSource,
   options: ConverterOptions = {}
 ): Promise<string> {
   const converter = new OfficeToMarkdown(options);
-  const result = await converter.convertDocx(filePath, options);
+  const result = await converter.convertDocx(source, options);
   return result.markdown;
 }
 
