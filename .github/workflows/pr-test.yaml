@@ -1,0 +1,41 @@
+name: PR Tests
+
+on:
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'packages/pdf-processor/**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup Bun
+      uses: oven-sh/setup-bun@v2
+      with:
+        bun-version: latest
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22'
+
+    - name: Install dependencies
+      run: |
+        cd packages/pdf-processor
+        bun install
+
+    - name: Build package
+      run: |
+        cd packages/pdf-processor
+        bun build src/index.ts --outdir dist --format esm --target node --external mammoth --external turndown --external jszip
+        bun tsc --project tsconfig.build.json
+
+    - name: Run tests
+      run: |
+        cd packages/pdf-processor
+        bun test
