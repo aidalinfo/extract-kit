@@ -40,3 +40,5 @@ jobs:
       run: |
         cd packages/pdf-processor
         bun test
+      env:
+        EK_MISTRAL_API_KEY: ${{ secrets.EK_MISTRAL_API_KEY }}
