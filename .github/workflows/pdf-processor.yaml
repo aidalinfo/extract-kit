@@ -1,0 +1,80 @@
+name: NPM Publish
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'packages/pdf-processor/package.json'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup Bun
+      uses: oven-sh/setup-bun@v2
+      with:
+        bun-version: latest
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22'
+        registry-url: 'https://registry.npmjs.org'
+
+    - name: Get package version
+      id: package
+      run: |
+        VERSION=$(cd packages/pdf-processor && node -p "require('./package.json').version")
+        PACKAGE_NAME=$(cd packages/pdf-processor && node -p "require('./package.json').name")
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        echo "name=$PACKAGE_NAME" >> $GITHUB_OUTPUT
+        echo "Package: $PACKAGE_NAME@$VERSION"
+
+    - name: Check if version exists on NPM
+      id: npm-check
+      run: |
+        cd packages/pdf-processor
+        if npm view ${{ steps.package.outputs.name }}@${{ steps.package.outputs.version }} version 2>/dev/null; then
+          echo "exists=true" >> $GITHUB_OUTPUT
+          echo "Version ${{ steps.package.outputs.version }} already exists on NPM"
+          exit 1
+        else
+          echo "exists=false" >> $GITHUB_OUTPUT
+          echo "Version ${{ steps.package.outputs.version }} does not exist on NPM"
+        fi
+
+    - name: Install dependencies
+      run: |
+        cd packages/pdf-processor
+        bun install
+
+    - name: Build package
+      run: |
+        cd packages/pdf-processor
+        bun build src/index.ts --outdir dist --format esm --target node --external mammoth --external turndown --external jszip
+        bun tsc --project tsconfig.build.json
+
+    - name: Publish to NPM
+      run: |
+        cd packages/pdf-processor
+        npm publish
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+    - name: Create Release
+      uses: softprops/action-gh-release@v2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: v${{ steps.package.outputs.version }}
+        name: Release v${{ steps.package.outputs.version }}
+        body: |
+          ## Changes
+          
+          Package ${{ steps.package.outputs.name }} has been updated to version ${{ steps.package.outputs.version }}.
+        draft: false
+        prerelease: false
