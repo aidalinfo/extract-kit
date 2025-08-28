@@ -4,7 +4,7 @@ import { z } from 'zod';
  * Interface pour les requêtes API Vision
  */
 export interface VisionExtractRequest {
-  provider?: 'scaleway' | 'ollama' | 'mistral';
+  provider?: 'scaleway' | 'ollama' | 'mistral' | 'custom';
   model?: string;
   query?: string;
   cropSize?: number;
@@ -19,7 +19,7 @@ export interface VisionExtractRequest {
  * Schéma de validation Zod pour les requêtes d'extraction
  */
 const ExtractRequestSchema = z.object({
-  provider: z.enum(['scaleway', 'ollama', 'mistral']).optional().default('scaleway'),
+  provider: z.enum(['scaleway', 'ollama', 'mistral', 'custom']).optional().default('scaleway'),
   model: z.string().optional(),
   query: z.string().optional().default('*'),
   cropSize: z.number().min(10).max(100).optional(),
