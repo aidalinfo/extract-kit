@@ -25,7 +25,7 @@ import { DEFAULT_MODELS } from "../core/types";
  */
 export interface ExtractOptions extends Omit<VisionExtractionOptions, 'provider'> {
   /** Provider d'IA à utiliser */
-  provider?: 'scaleway' | 'ollama' | 'mistral';
+  provider?: 'scaleway' | 'ollama' | 'mistral' | 'custom';
   /** Modèle spécifique (optionnel) */
   model?: string;
   /** Schema JSON personnalisé ou type de document */
