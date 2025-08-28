@@ -24,10 +24,11 @@ jobs:
       with:
         node-version: '22'
 
-    - name: Install dependencies
+    - name: Install dependencies and typecheck
       run: |
         cd packages/pdf-processor
         bun install
+        bun tsc --noEmit
 
     - name: Build package
       run: |
