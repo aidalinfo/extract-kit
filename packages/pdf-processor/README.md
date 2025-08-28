@@ -6,6 +6,185 @@ Welcome to **PDF Processor** - a powerful, modern PDF data extraction solution p
 
 > 🌟 **Inspired by [Sparrow](https://github.com/katanaml/sparrow)** - This project builds upon the innovative concepts from Katana ML's Sparrow framework, reimagined with modern TypeScript, Bun runtime, and enhanced AI vision capabilities. 
 
+## 📦 Using as a Library
+
+### Installation
+
+```bash
+# Using npm
+npm install @aidalinfo/pdf-processor
+
+# Using bun
+bun add @aidalinfo/pdf-processor
+
+# Using yarn
+yarn add @aidalinfo/pdf-processor
+```
+
+### Basic Usage
+
+```typescript
+import { extractInvoicePdf, extractTablesPdf, extractPdf, schemas } from '@aidalinfo/pdf-processor';
+
+// Extract invoice data with validation
+const invoice = await extractInvoicePdf('path/to/invoice.pdf', {
+  provider: 'scaleway',
+  enhanceContrast: true
+});
+
+console.log(`Invoice #${invoice.invoice_details?.invoice_number}`);
+console.log(`Total: ${invoice.financial_totals?.total_amount}`);
+
+// Extract tables from any document
+const tables = await extractTablesPdf('path/to/report.pdf');
+tables.detected_tables.forEach(table => {
+  console.log(`Found table: ${table.table_name}`);
+  console.log(`Headers: ${table.headers.join(', ')}`);
+});
+
+// Custom extraction with your own schema
+const customData = await extractPdf('document.pdf', schemas.invoice, {
+  provider: 'scaleway',
+  model: 'pixtral-12b-2409'
+});
+```
+
+### Configuration Options
+
+#### Method 1: Environment Variables (Traditional)
+
+```bash
+# Set environment variables
+export EK_AI_API_KEY="your-scaleway-api-key"
+export EK_AI_BASE_URL="https://api.scaleway.ai/v1"
+```
+
+```typescript
+// Use with environment variables
+const invoice = await extractInvoicePdf('invoice.pdf', {
+  provider: 'scaleway'
+});
+```
+
+#### Method 2: Configuration Object (New & Recommended)
+
+```typescript
+import { extractInvoicePdf, type PdfProcessorConfig } from '@aidalinfo/pdf-processor';
+
+// Configure providers programmatically
+const pdfProcessor: PdfProcessorConfig = {
+  providers: {
+    scaleway: {
+      model: "mistral-small-3.1-24b-instruct-2503",
+      apiKey: "your-scaleway-api-key",
+      baseURL: "https://api.scaleway.ai/v1" // optional
+    },
+    ollama: {
+      model: "llava:13b",
+      baseURL: "http://localhost:11434" // optional, defaults to localhost
+    },
+    mistral: {
+      model: "pixtral-large-latest", // Best for OCR/vision
+      apiKey: "your-mistral-api-key",
+      baseURL: "https://api.mistral.ai/v1" // optional
+    },
+    custom: {
+      model: "your-model-name",
+      apiKey: "your-api-key",
+      baseURL: "https://your-api-endpoint.com/v1" // required
+    }
+  }
+};
+
+// Use configuration object
+const invoice = await extractInvoicePdf('invoice.pdf', {
+  provider: 'scaleway',
+  pdfProcessor
+});
+
+// Configuration takes priority over environment variables
+const receipt = await extractReceiptPdf('receipt.pdf', {
+  provider: 'ollama',
+  pdfProcessor
+});
+```
+
+### Advanced Features
+
+#### With Detailed Metadata
+
+```typescript
+import { extractPdfWithMetadata } from '@aidalinfo/pdf-processor';
+
+const result = await extractPdfWithMetadata('document.pdf', schemas.invoice, {
+  provider: 'scaleway',
+  pdfProcessor
+});
+
+console.log('Extracted data:', result.data);
+console.log('Processing time:', result.metadata.processingTime);
+console.log('Pages processed:', result.metadata.pageCount);
+console.log('Model used:', result.metadata.model);
+```
+
+#### Custom Models and Settings
+
+```typescript
+const advancedConfig: PdfProcessorConfig = {
+  providers: {
+    scaleway: {
+      model: "mistral-small-3.1-24b-instruct-2503", // Different model
+      apiKey: "your-api-key",
+      baseURL: "https://custom-endpoint.ai/v1"
+    }
+  }
+};
+
+const result = await extractInvoicePdf('invoice.pdf', {
+  provider: 'scaleway',
+  enhanceContrast: true,
+  targetQuality: 90,
+  dpi: 300,
+  maxRetries: 3,
+  pdfProcessor: advancedConfig
+});
+```
+
+### Available Functions
+
+| Function | Description | Returns |
+|----------|-------------|---------|
+| `extractInvoicePdf()` | Extract complete invoice data | `ComprehensiveInvoice` |
+| `extractTablesPdf()` | Extract tables and tabular data | `TablesOnly` |
+| `extractReceiptPdf()` | Extract receipt data | `BasicReceipt` |
+| `extractPdf()` | Custom extraction with your schema | Generic `T` |
+| `extractPdfWithMetadata()` | Extract with processing metadata | `ExtractResult<T>` |
+
+### Configuration Priority
+
+The library uses the following priority order:
+
+1. **Configuration object** (`pdfProcessor` parameter)
+2. **Environment variables** (`EK_AI_API_KEY`, `EK_AI_BASE_URL`)  
+3. **Default values**
+
+This allows you to mix approaches - for example, use environment variables for API keys and configuration objects for model selection.
+
+### TypeScript Support
+
+Full TypeScript support with exported types:
+
+```typescript
+import type { 
+  PdfProcessorConfig, 
+  ProviderConfig,
+  ComprehensiveInvoice,
+  TablesOnly,
+  BasicReceipt,
+  ExtractOptions
+} from '@aidalinfo/pdf-processor';
+```
+
 ## 🎯 What is PDF Processor?
 
 PDF Processor is a production-ready TypeScript/Bun-based service that leverages cutting-edge AI vision models to intelligently extract structured data from PDF documents. Whether you're processing invoices, receipts, tables, or custom documents, this library makes it simple and reliable.
@@ -66,56 +245,6 @@ extract-kit/
    bun run dev
    ```
 
-## 📡 API Usage
-
-### Extract Invoice Data
-
-```bash
-# Using Scaleway
-curl -X POST http://localhost:3000/api/v1/vision/invoice \
-  -F "file=@invoice.pdf" \
-  -F "provider=scaleway"
-
-# Using Mistral AI
-curl -X POST http://localhost:3000/api/v1/vision/invoice \
-  -F "file=@invoice.pdf" \
-  -F "provider=mistral" \
-  -F "model=pixtral-large-latest"
-```
-
-### Extract Tables
-
-```bash
-# Default provider
-curl -X POST http://localhost:3000/api/v1/vision/tables \
-  -F "file=@report.pdf"
-
-# Using Mistral AI
-curl -X POST http://localhost:3000/api/v1/vision/tables \
-  -F "file=@report.pdf" \
-  -F "provider=mistral"
-```
-
-### Custom Extraction
-
-```bash
-# Using Scaleway
-curl -X POST http://localhost:3000/api/v1/vision/extract \
-  -F "file=@document.pdf" \
-  -F "provider=scaleway" \
-  -F "documentType=custom" \
-  -F "query=Extract all product information"
-
-# Using Custom Provider
-curl -X POST http://localhost:3000/api/v1/vision/extract \
-  -F "file=@document.pdf" \
-  -F "provider=custom" \
-  -F "model=your-model-name" \
-  -F "documentType=custom" \
-  -F "query=Extract all product information"
-```
-
-## 📦 Using as a Library
 
 ### Installation
 
