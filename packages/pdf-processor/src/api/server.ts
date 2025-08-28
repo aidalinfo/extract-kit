@@ -36,7 +36,7 @@ export function createVisionAPI(config: APIServerConfig = {}) {
   }
 
   const serverConfig = {
-    port: config.port || process.env.PORT ? parseInt(process.env.PORT) : 3001,
+    port: config.port || (process.env.PORT ? parseInt(process.env.PORT) : 3001),
     cors: config.cors !== false,
     corsOrigins: config.corsOrigins || ["*"]
   };
@@ -46,7 +46,7 @@ export function createVisionAPI(config: APIServerConfig = {}) {
   const server = serve({
     port: serverConfig.port,
     
-    async fetch(req) {
+    async fetch(req: Request) {
       const url = new URL(req.url);
       
       // CORS Preflight
