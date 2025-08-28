@@ -1,6 +1,5 @@
-import { generateObject } from 'ai';
+import { generateObject, type LanguageModel } from 'ai';
 import { createOpenAI } from '@ai-sdk/openai';
-import { ollama, createOllama } from 'ollama-ai-provider';
 import { z } from 'zod';
 import { createModuleLogger } from "../../utils/logger";
 import { DEFAULT_MODELS } from '../types';
@@ -50,7 +49,7 @@ export class AIGenerator {
     
     try {
       const result = await generateObject({
-        model: model as any,
+        model,
         schema,
         messages: [
           {
@@ -88,7 +87,7 @@ export class AIGenerator {
   /**
    * Obtient l'instance du modèle selon le provider avec config personnalisée
    */
-  private getModelInstance(provider: string, model?: string, config?: PdfProcessorConfig) {
+  private getModelInstance(provider: string, model?: string, config?: PdfProcessorConfig): LanguageModel {
     const providerConfig = config?.providers?.[provider as keyof typeof config.providers];
     const modelToUse = model || providerConfig?.model || DEFAULT_MODELS[provider as keyof typeof DEFAULT_MODELS];
     
@@ -127,16 +126,14 @@ export class AIGenerator {
         return mistralClient.chat(modelToUse);
       
       case 'ollama':
-        const ollamaBaseURL = providerConfig?.baseURL;
-        
-        if (ollamaBaseURL) {
-          const customOllama = createOllama({
-            baseURL: ollamaBaseURL
-          });
-          return customOllama(modelToUse);
+        const ollamaConfig: any = {
+          baseURL: 'http://localhost:11434/api',
+        };
+        if (providerConfig?.baseURL) {
+          ollamaConfig.baseURL = providerConfig.baseURL;
         }
-        
-        return ollama(modelToUse);
+        const ollama = createOpenAI(ollamaConfig);
+        return ollama.chat(modelToUse);
       
       case 'custom':
         const customApiKey = providerConfig?.apiKey || process.env.CUSTOM_API_KEY;

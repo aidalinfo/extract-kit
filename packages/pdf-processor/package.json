@@ -1,6 +1,6 @@
 {
   "name": "@aidalinfo/pdf-processor",
-  "version": "1.0.6",
+  "version": "1.0.15",
   "description": "Powerful PDF data extraction library powered by AI vision models. Transform PDFs into structured, validated data using TypeScript, Zod, and AI providers like Scaleway and Ollama.",
   "main": "dist/index.js",
   "module": "dist/index.js",
@@ -17,7 +17,7 @@
     "server": "bun run src/server.ts",
     "build": "bun run clean && bun run build:esm && bun run build:types",
     "build:esm": "bun build src/index.ts --outdir dist --format esm --target node --external sharp --external ghostscript-node --external @ai-sdk/openai --external ai --external ollama-ai-provider --external pino --external zod",
-    "build:types": "tsc --project tsconfig.build.json",
+    "build:types": "bun tsc --project tsconfig.build.json",
     "test": "bun test",
     "prepublishOnly": "bun run build",
     "clean": "rm -rf dist"
@@ -82,15 +82,5 @@
   },
   "peerDependencies": {
     "typescript": ">=4.5.0"
-  },
-  "pnpm": {
-    "supportedArchitectures": {
-      "os": [
-        "linux"
-      ],
-      "cpu": [
-        "x64"
-      ]
-    }
   }
 }

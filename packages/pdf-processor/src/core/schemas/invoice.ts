@@ -7,7 +7,7 @@ import { ContactInfoSchema, DocumentInfoSchema, PaymentInfoSchema } from './base
 
 export const InvoiceLineItemSchema = z.object({
   item_number: z.string().nullable().optional(),
-  description: z.string().nullable(),
+  description: z.string().nullable().optional(),
   quantity: z.number().nullable().optional(),
   unit: z.string().nullable().optional(),
   unit_price: z.number().nullable().optional(),
@@ -46,8 +46,8 @@ export const FinancialTotalsSchema = z.object({
 });
 
 export const InvoiceDetailsSchema = z.object({
-  invoice_number: z.string().nullable(),
-  invoice_date: z.string().nullable(),
+  invoice_number: z.string().nullable().optional(),
+  invoice_date: z.string().nullable().optional(),
   due_date: z.string().nullable().optional(),
   purchase_order: z.string().nullable().optional(),
   reference_number: z.string().nullable().optional(),
@@ -89,8 +89,8 @@ export const ComprehensiveInvoiceSchema = z.object({
       
       // Totaux finaux
       total: FinancialTotalsSchema.optional(),
-      reference: z.string().optional(),
-      exercice: z.string().optional(),
+      reference: z.string().nullable().optional(),
+      exercice: z.string().nullable().optional(),
       montant_ttc: z.number().nullable().optional(),
       currency: z.string().nullable().optional(),
       
@@ -109,15 +109,15 @@ export const ComprehensiveInvoiceSchema = z.object({
 
 // === SCHÉMA REÇU SIMPLE ===
 export const BasicReceiptSchema = z.object({
-  merchant_name: z.string().nullable(),
-  transaction_date: z.string().nullable(),
-  total_amount: z.number().nullable(),
-  payment_method: z.string().nullable(),
+  merchant_name: z.string().nullable().optional(),
+  transaction_date: z.string().nullable().optional(),
+  total_amount: z.number().nullable().optional(),
+  payment_method: z.string().nullable().optional(),
   currency: z.string().nullable().optional(),
   items: z.array(z.object({
-    name: z.string().nullable(),
-    price: z.number().nullable(),
-  })),
+    name: z.string().nullable().optional(),
+    price: z.number().nullable().optional(),
+  })).optional(),
 });
 
 // Types TypeScript générés

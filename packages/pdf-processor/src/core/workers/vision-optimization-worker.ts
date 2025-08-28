@@ -15,7 +15,7 @@ export interface VisionOptimizationTask {
   taskId: string;
   imagePaths: string[];
   options: {
-    provider: 'scaleway' | 'ollama';
+    provider: string;
     cropSize?: number;
     enhanceContrast?: boolean;
     preserveColor?: boolean;

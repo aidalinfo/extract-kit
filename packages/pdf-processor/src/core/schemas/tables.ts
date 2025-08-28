@@ -9,18 +9,18 @@ export const TableRowSchema = z.array(
 );
 
 export const DetectedTableSchema = z.object({
-  table_name: z.string().nullable(),
-  table_type: z.string().nullable(),
-  headers: z.array(z.string()),
-  rows: z.array(TableRowSchema),
-  summary: z.string().nullable(),
+  table_name: z.string().nullable().optional(),
+  table_type: z.string().nullable().optional(),
+  headers: z.array(z.string()).optional(),
+  rows: z.array(TableRowSchema).optional(),
+  summary: z.string().nullable().optional(),
 });
 
 export const TablesOnlySchema = z.object({
-  detected_tables: z.array(DetectedTableSchema),
+  detected_tables: z.array(DetectedTableSchema).optional(),
   extraction_metadata: z.object({
-    tables_found: z.number().int().nullable(),
-    confidence_score: z.number().min(0).max(1).nullable(),
+    tables_found: z.number().int().nullable().optional(),
+    confidence_score: z.number().min(0).max(1).nullable().optional(),
   }).optional(),
 });
 
