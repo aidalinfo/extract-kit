@@ -18,6 +18,7 @@
     "build": "bun run clean && bun run build:esm && bun run build:types",
     "build:esm": "bun build src/index.ts --outdir dist --format esm --target node --external sharp --external ghostscript-node --external @ai-sdk/openai --external ai --external ollama-ai-provider --external pino --external zod",
     "build:types": "bun tsc --project tsconfig.build.json",
+    "typecheck": "bun tsc --noEmit",
     "test": "bun test",
     "prepublishOnly": "bun run build",
     "clean": "rm -rf dist"
