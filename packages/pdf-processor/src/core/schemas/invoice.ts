@@ -117,6 +117,8 @@ export const BasicReceiptSchema = z.object({
   items: z.array(z.object({
     name: z.string().nullable().optional(),
     price: z.number().nullable().optional(),
+    quantity: z.number().nullable().optional(),
+    total: z.number().nullable().optional(),
   })).optional(),
 });
 

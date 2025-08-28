@@ -90,6 +90,8 @@ export class SchemaFactory {
         return TablesOnlySchema;
         
       case 'basic':
+        return ComprehensiveInvoiceSchema;
+
       case 'simple':
         return ComprehensiveInvoiceSchema;
       
