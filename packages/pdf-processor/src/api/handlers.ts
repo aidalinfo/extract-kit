@@ -1,6 +1,6 @@
 import { aiVisionProcessor, extractInvoice, extractTables } from "../core/vision";
 import { createModuleLogger } from "../utils/logger";
-import { validateExtractRequest, VisionExtractRequest } from './validation';
+import { validateExtractRequest } from './validation';
 import { createTempFile } from './utils';
 
 const logger = createModuleLogger('api-handlers');
@@ -57,7 +57,7 @@ export async function handleExtractRequest(req: Request, corsHeaders: Record<str
     
     try {
       const result = await aiVisionProcessor.process(filePath, {
-        provider: options.provider,
+        provider: options.provider!,
         model: options.model,
         query: options.query,
         cropSize: options.cropSize,

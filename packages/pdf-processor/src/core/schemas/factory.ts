@@ -43,7 +43,7 @@ export class SchemaFactory {
     if (Array.isArray(prop.type)) {
       // Type union comme ['string', 'null']
       if (prop.type.includes('null')) {
-        const nonNullType = prop.type.find(t => t !== 'null');
+        const nonNullType = prop.type.find((t: any) => t !== 'null');
         return this.getZodTypeForString(nonNullType).nullable();
       }
     }
@@ -90,6 +90,8 @@ export class SchemaFactory {
         return TablesOnlySchema;
         
       case 'basic':
+        return ComprehensiveInvoiceSchema;
+
       case 'simple':
         return ComprehensiveInvoiceSchema;
       

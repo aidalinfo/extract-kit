@@ -1,7 +1,7 @@
 import path from "path";
 import { createModuleLogger } from "../../utils/logger";
 import { workerPoolManager } from "../workers/worker-pool-manager";
-import { AIVisionProcessingOptions } from './processor';
+import type { AIVisionProcessingOptions } from './processor';
 import type { 
   PdfExtractionTask, 
   PdfExtractionResult 

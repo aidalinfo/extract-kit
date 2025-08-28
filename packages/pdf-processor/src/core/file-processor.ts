@@ -4,7 +4,7 @@ import sharp from "sharp";
 import os from "os";
 import { existsSync } from "fs";
 import * as gs from "ghostscript-node";
-import { InternalProcessingOptions } from "./types";
+import type { InternalProcessingOptions } from "./types";
 import { createModuleLogger } from "../utils/logger";
 
 const logger = createModuleLogger('file-processor');
