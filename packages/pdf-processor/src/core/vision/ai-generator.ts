@@ -126,27 +126,30 @@ export class AIGenerator {
         return mistralClient.chat(modelToUse);
       
       case 'ollama':
+        const defaultOllamaURL = 'http://localhost:11434/v1';
         const ollamaConfig: any = {
-          baseURL: 'http://localhost:11434/api',
+          baseURL: providerConfig?.baseURL || defaultOllamaURL,
+          apiKey: 'not-needed', // Ollama doesn't require API key
         };
-        if (providerConfig?.baseURL) {
-          ollamaConfig.baseURL = providerConfig.baseURL;
-        }
+        
+        logger.debug({
+          provider: 'ollama',
+          baseURL: ollamaConfig.baseURL,
+          model: modelToUse
+        }, '🦙 Configuration Ollama');
+        
         const ollama = createOpenAI(ollamaConfig);
         return ollama.chat(modelToUse);
       
       case 'custom':
-        const customApiKey = providerConfig?.apiKey || process.env.CUSTOM_API_KEY;
+        const customApiKey = providerConfig?.apiKey || process.env.CUSTOM_API_KEY || 'not-needed';
         const customBaseURL = providerConfig?.baseURL;
-        
-        if (!customApiKey) {
-          throw new Error('Custom API key requis: fournissez-le via pdfProcessor.providers.custom.apiKey ou CUSTOM_API_KEY');
-        }
         
         if (!customBaseURL) {
           throw new Error('Custom baseURL requis: fournissez-le via pdfProcessor.providers.custom.baseURL');
         }
         
+        // For local providers like Ollama, API key is not needed
         const customClient = createOpenAI({ apiKey: customApiKey, baseURL: customBaseURL });
         return customClient.chat(modelToUse); // Force l'utilisation de Chat Completions API
       
