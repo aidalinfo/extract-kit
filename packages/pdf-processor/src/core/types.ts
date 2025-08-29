@@ -57,7 +57,7 @@ export interface InternalProcessingOptions extends VisionExtractionOptions {
  */
 export const DEFAULT_MODELS: Record<VisionProvider, string> = {
   'scaleway': 'mistral-small-3.1-24b-instruct-2503',
-  'ollama': 'llava:13b',
+  'ollama': 'llava:latest',
   'mistral': 'pixtral-12b-latest',
   'custom': '' 
 };

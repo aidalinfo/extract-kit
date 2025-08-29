@@ -30,8 +30,7 @@ export class AIGenerator {
     // Construction du prompt optimisé selon le schéma
     const prompt = this.buildPromptForSchema(schema, options);
     
-    const modelToUse = options.model || DEFAULT_MODELS[provider];
-    logger.debug({ provider, model: modelToUse }, '🎯 Génération avec AI');
+    logger.debug({ provider, model: modelName }, '🎯 Génération avec AI');
     
     // Préparation des images selon le format du provider
     const imageMessages = this.formatImagesForProvider(images, provider);
