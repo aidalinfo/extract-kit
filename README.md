@@ -2,8 +2,6 @@
 
 Welcome to **Extract Kit** - a powerful, modern solution for document data extraction and conversion, powered by AI vision models! Transform your PDFs and Office documents into structured, validated data with ease.
 
-> 🌟 **Inspired by [Sparrow](https://github.com/katanaml/sparrow)** - This project builds upon the innovative concepts from Katana ML's Sparrow framework, reimagined with modern TypeScript, Bun runtime, and enhanced AI vision capabilities.
-
 ## 🎯 What is Extract Kit?
 
 Extract Kit is a monorepo containing a suite of production-ready TypeScript/Bun-based tools that leverage cutting-edge AI vision models and advanced parsing techniques to intelligently extract and convert data from various document formats.
